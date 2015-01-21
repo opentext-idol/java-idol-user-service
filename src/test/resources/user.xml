@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<autnresponse xmlns:autn="http://schemas.autonomy.com/aci/">
+    <action>USERREAD</action>
+    <response>SUCCESS</response>
+    <responsedata>
+        <autn:uid>8</autn:uid>
+        <autn:username>baz</autn:username>
+        <autn:locked>false</autn:locked>
+        <autn:lockedlasttime>0</autn:lockedlasttime>
+        <autn:maxagents>15</autn:maxagents>
+        <autn:numagents>0</autn:numagents>
+        <autn:lastloggedin>1379929725</autn:lastloggedin>
+        <autn:numfields>0</autn:numfields>
+    </responsedata>
+</autnresponse>

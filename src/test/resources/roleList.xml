@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<autnresponse xmlns:autn="http://schemas.autonomy.com/aci/">
+    <action>ROLEUSERGETROLELIST</action>
+    <response>SUCCESS</response>
+    <responsedata>
+        <autn:numroles>2</autn:numroles>
+        <autn:role>&lt;font color="red"&gt;role&lt;/font&gt;</autn:role>
+        <autn:role>everyone</autn:role>
+    </responsedata>
+</autnresponse>

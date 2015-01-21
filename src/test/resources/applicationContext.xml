@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="configService" class="com.autonomy.frontend.testing.mock.MocksFactory">
+        <property name="type" value="com.hp.autonomy.frontend.configuration.ConfigService"/>
+    </bean>
+
+    <bean id="aciService" class="com.autonomy.frontend.testing.mock.MocksFactory">
+        <property name="type" value="com.autonomy.aci.client.services.impl.AciServiceImpl"/>
+    </bean>
+
+    <bean id="processorFactory" class="com.autonomy.frontend.testing.mock.MocksFactory">
+        <property name="type" value="com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory"/>
+    </bean>
+
+    <bean class="com.autonomy.user.admin.UserAdminImpl">
+        <constructor-arg index="0" ref="configService"/>
+        <constructor-arg index="1" ref="aciService"/>
+        <constructor-arg index="2" ref="processorFactory"/>
+    </bean>
+</beans>
