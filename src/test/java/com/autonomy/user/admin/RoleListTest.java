@@ -9,6 +9,7 @@ import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactoryImpl;
 import com.autonomy.aci.client.services.StAXProcessor;
 import com.autonomy.user.admin.dto.RoleList;
+import com.hp.autonomy.test.xml.XmlTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +17,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.util.List;
 
-import static com.autonomy.test.unit.TestUtils.getResourceAsXMLStreamReader;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -28,7 +28,7 @@ public class RoleListTest {
 
     @Before
     public void setUp() throws XMLStreamException {
-        this.roleListXMLReader = getResourceAsXMLStreamReader("/roleList.xml");
+        this.roleListXMLReader = XmlTestUtils.getResourceAsXMLStreamReader("/roleList.xml");
         this.processorFactory = new IdolAnnotationsProcessorFactoryImpl();
     }
 

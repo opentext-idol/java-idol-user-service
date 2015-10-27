@@ -8,6 +8,7 @@ package com.autonomy.user.admin.dto;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactoryImpl;
 import com.autonomy.aci.client.services.StAXProcessor;
+import com.hp.autonomy.test.xml.XmlTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,7 +16,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.util.List;
 
-import static com.autonomy.test.unit.TestUtils.getResourceAsXMLStreamReader;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -27,7 +27,7 @@ public class UidTest {
 
     @Before
     public void setUp() throws XMLStreamException {
-        this.uidXmlStreamReader = getResourceAsXMLStreamReader("/userAdd.xml");
+        this.uidXmlStreamReader = XmlTestUtils.getResourceAsXMLStreamReader("/userAdd.xml");
         this.processorFactory = new IdolAnnotationsProcessorFactoryImpl();
     }
 

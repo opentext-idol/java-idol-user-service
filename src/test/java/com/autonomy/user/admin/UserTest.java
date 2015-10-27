@@ -9,15 +9,14 @@ import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactoryImpl;
 import com.autonomy.aci.client.services.StAXProcessor;
 import com.autonomy.user.admin.dto.User;
+import com.hp.autonomy.test.xml.XmlTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
 import java.util.List;
 
-import static com.autonomy.test.unit.TestUtils.getResourceAsXMLStreamReader;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
@@ -30,7 +29,7 @@ public class UserTest {
 
     @Before
     public void setUp() throws XMLStreamException {
-        this.xmlReader = getResourceAsXMLStreamReader("/user.xml");
+        this.xmlReader = XmlTestUtils.getResourceAsXMLStreamReader("/user.xml");
         this.processorFactory = new IdolAnnotationsProcessorFactoryImpl();
     }
 
