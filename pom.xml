@@ -11,8 +11,52 @@
     </parent>
 
     <groupId>com.hp.autonomy.frontend.user</groupId>
-    <artifactId>user-admin-core</artifactId>
+    <artifactId>user-admin</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+
+    <inceptionYear>2013</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Alex Scown</name>
+            <email>alex.scown@hpe.com</email>
+            <organization>HP</organization>
+            <organizationUrl>http://www.hp.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Matthew Gordon</name>
+            <email>matthew.gordon2@hpe.com</email>
+            <organization>HP</organization>
+            <organizationUrl>http://www.hp.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Daniel Grayling</name>
+            <email>daniel.grayling@hpe.com</email>
+            <organization>HP</organization>
+            <organizationUrl>http://www.hp.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Luca Mandrioli</name>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:hpautonomy/java-user-admin.git</connection>
+        <developerConnection>scm:git:git@github.com:hpautonomy/java-user-admin.git</developerConnection>
+        <url>git@github.com:hpautonomy/java-user-admin.git</url>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/hpautonomy/java-user-admin/issues</url>
+    </issueManagement>
 
     <properties>
         <org.springframework.version>4.1.6.RELEASE</org.springframework.version>
