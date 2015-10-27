@@ -5,9 +5,6 @@
 
 package com.autonomy.user.admin;
 
-import com.autonomy.aci.actions.DontCareAsLongAsItsNotAnErrorProcessor;
-import com.autonomy.aci.actions.idol.user.UserList;
-import com.autonomy.aci.actions.idol.user.UserReadUserListProcessor;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.transport.AciServerDetails;
@@ -16,6 +13,7 @@ import com.autonomy.user.admin.dto.RoleList;
 import com.autonomy.user.admin.dto.Security;
 import com.autonomy.user.admin.dto.Uid;
 import com.autonomy.user.admin.dto.User;
+import com.autonomy.user.admin.dto.UserList;
 import com.autonomy.user.admin.dto.UserReadUserListDetailsUser;
 import com.autonomy.user.admin.dto.UserRoles;
 import com.hp.autonomy.frontend.configuration.ConfigService;
@@ -109,7 +107,7 @@ public class UserAdminImpl implements UserAdmin {
     public void deleteUser(final long uid) {
         final AciParameters parameters = new AciParameters("UserDelete");
         parameters.add(UID, uid);
-        aciService.executeAction(getCommunity(), parameters, new DontCareAsLongAsItsNotAnErrorProcessor());
+        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
     }
 
     @Override
@@ -118,7 +116,7 @@ public class UserAdminImpl implements UserAdmin {
         parameters.add(UID, uid);
         parameters.add("ResetPassword", true);
         parameters.add("NewPassword", password);
-        aciService.executeAction(getCommunity(), parameters, new DontCareAsLongAsItsNotAnErrorProcessor());
+        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
     }
 
     @Override
@@ -144,7 +142,7 @@ public class UserAdminImpl implements UserAdmin {
     public void addRole(final String role) {
         final AciParameters parameters = new AciParameters("RoleAdd");
         parameters.add(ROLE_NAME, role);
-        aciService.executeAction(getCommunity(), parameters, new DontCareAsLongAsItsNotAnErrorProcessor());
+        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
     }
 
     @Override
@@ -153,7 +151,7 @@ public class UserAdminImpl implements UserAdmin {
         parameters.add(ROLE_NAME, role);
         parameters.add(UID, uid);
 
-        aciService.executeAction(getCommunity(), parameters, new DontCareAsLongAsItsNotAnErrorProcessor());
+        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
     }
 
     @Override
@@ -162,14 +160,14 @@ public class UserAdminImpl implements UserAdmin {
         parameters.add(ROLE_NAME, role);
         parameters.add(UID, uid);
 
-        aciService.executeAction(getCommunity(), parameters, new DontCareAsLongAsItsNotAnErrorProcessor());
+        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
     }
 
     @Override
     public void removeRole(final String role) {
         final AciParameters parameters = new AciParameters("RoleDelete");
         parameters.add(ROLE_NAME, role);
-        aciService.executeAction(getCommunity(), parameters, new DontCareAsLongAsItsNotAnErrorProcessor());
+        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
     }
 
     @Override
@@ -255,7 +253,7 @@ public class UserAdminImpl implements UserAdmin {
     private UserList getUsersWithRole(final String role) {
         final AciParameters parameters = new AciParameters("RoleGetUserList");
         parameters.add(ROLE_NAME, role);
-        return aciService.executeAction(getCommunity(), parameters, new UserReadUserListProcessor());
+        return aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(UserList.class)).get(0);
     }
 
     private AciServerDetails getCommunity() {

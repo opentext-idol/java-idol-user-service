@@ -5,7 +5,6 @@
 
 package com.autonomy.user.admin;
 
-import com.autonomy.aci.actions.idol.user.UserList;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
@@ -16,6 +15,7 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
 import com.autonomy.user.admin.dto.RoleList;
 import com.autonomy.user.admin.dto.User;
+import com.autonomy.user.admin.dto.UserList;
 import com.autonomy.user.admin.dto.UserReadUserListDetailsUser;
 import com.autonomy.user.admin.dto.UserRoles;
 import com.hp.autonomy.frontend.configuration.ConfigService;
@@ -131,7 +131,14 @@ public class UserAdminTest {
 
         when(aciService.executeAction(
                 any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class)))
-                .thenReturn(roles, users, getUserRoles1(), getUserRoles2(), getUserRoles3(), getUserRoles4());
+                .thenReturn(
+                    roles,
+                    users,
+                    Collections.singletonList(getUserRoles1()),
+                    Collections.singletonList(getUserRoles2()),
+                    Collections.singletonList(getUserRoles3()),
+                    Collections.singletonList(getUserRoles4())
+                );
 
         final List<UserRoles> userRoles = userAdmin.getUsersRoles();
 
@@ -152,7 +159,11 @@ public class UserAdminTest {
 
         when(aciService.executeAction(
                 any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class)))
-                .thenReturn(roles, getUsers3(), getUserRoles3());
+                .thenReturn(
+                    roles,
+                    getUsers3(),
+                    Collections.singletonList(getUserRoles3())
+                );
 
         final List<UserRoles> userRoles = userAdmin.getUsersRoles("black sabbath");
 
@@ -170,7 +181,11 @@ public class UserAdminTest {
 
         when(aciService.executeAction(
                 any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class)))
-                .thenReturn(roles, getUsers1(), getUserRoles2());
+                .thenReturn(
+                    roles,
+                    getUsers1(),
+                    Collections.singletonList(getUserRoles2())
+                );
 
         final List<UserRoles> userRoles = userAdmin.getUsersRoles(Arrays.asList("deep purple", "rainbow"));
 
@@ -186,7 +201,11 @@ public class UserAdminTest {
     public void getUsersRolesWithExceptTest() {
         when(aciService.executeAction(
                 any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class))
-        ).thenReturn(roleList(), getUsers3(), getUserRoles4());
+        ).thenReturn(
+            roleList(),
+            getUsers3(),
+            Collections.singletonList(getUserRoles4())
+        );
 
         final List<UserRoles> userRoles = userAdmin.getUsersRolesExcept(Arrays.asList("deep purple", "rainbow"));
 
@@ -209,25 +228,25 @@ public class UserAdminTest {
                 isA(AciServerDetails.class),
                 argThat(equalsAciParameters(new AciParameters("RoleGetRoleList"))),
                 isA(Processor.class))
-        ).thenReturn(Arrays.asList(roleList));
+        ).thenReturn(Collections.singletonList(roleList));
 
         final AciParameters developersAciParameters = new AciParameters("RoleGetUserList");
         developersAciParameters.add("RoleName", "developer");
 
-        when(aciService.<UserList>executeAction(
+        when(aciService.<List<UserList>>executeAction(
                 isA(AciServerDetails.class),
                 argThat(equalsAciParameters(developersAciParameters)),
                 isA(Processor.class)
-        )).thenReturn(new UserList(5, 3, Arrays.asList("brian", "alex", "matthew")));
+        )).thenReturn(Collections.singletonList(new UserList(Arrays.asList("brian", "alex", "matthew"))));
 
         final AciParameters managersAciParameters = new AciParameters("RoleGetUserList");
         managersAciParameters.add("RoleName", "manager");
 
-        when(aciService.<UserList>executeAction(
+        when(aciService.<List<UserList>>executeAction(
                 isA(AciServerDetails.class),
                 argThat(equalsAciParameters(managersAciParameters)),
                 isA(Processor.class)
-        )).thenReturn(new UserList(5, 2, Arrays.asList("brian", "sean")));
+        )).thenReturn(Collections.singletonList(new UserList(Arrays.asList("brian", "sean"))));
 
         final AciParameters cooksAciParameters = new AciParameters("RoleGetUserList");
         cooksAciParameters.add("RoleName", "cook");
@@ -324,31 +343,19 @@ public class UserAdminTest {
     }
 
     private UserList getUserRoles1() {
-        final UserList userList = new UserList();
-        userList.setUserNames(Arrays.asList("richie blackmore", "ian gillan"));
-
-        return userList;
+        return new UserList(Arrays.asList("richie blackmore", "ian gillan"));
     }
 
     private UserList getUserRoles2() {
-        final UserList userList = new UserList();
-        userList.setUserNames(Arrays.asList("richie blackmore"));
-
-        return userList;
+        return new UserList(Collections.singletonList("richie blackmore"));
     }
 
     private UserList getUserRoles3() {
-        final UserList userList = new UserList();
-        userList.setUserNames(Arrays.asList("bobby rondinelli", "ian gillan"));
-
-        return userList;
+        return new UserList(Arrays.asList("bobby rondinelli", "ian gillan"));
     }
 
     private UserList getUserRoles4() {
-        final UserList userList = new UserList();
-        userList.setUserNames(Arrays.asList("bobby rondinelli"));
-
-        return userList;
+        return new UserList(Collections.singletonList("bobby rondinelli"));
     }
 
     private List<UserReadUserListDetailsUser> getUsers1() {
@@ -356,7 +363,7 @@ public class UserAdminTest {
     }
 
     private List<UserReadUserListDetailsUser> getUsers2() {
-        return Arrays.asList(users.get(1));
+        return Collections.singletonList(users.get(1));
     }
 
     private List<UserReadUserListDetailsUser> getUsers3() {
@@ -364,7 +371,7 @@ public class UserAdminTest {
     }
 
     private List<UserReadUserListDetailsUser> getUsers4() {
-        return Arrays.asList(users.get(3));
+        return Collections.singletonList(users.get(3));
     }
 
     private List<RoleList> roleList() {
