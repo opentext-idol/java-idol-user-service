@@ -16,6 +16,10 @@
 
     <inceptionYear>2013</inceptionYear>
 
+    <name>HP Autonomy User Admin</name>
+    <description>Library for interacting with IDOL community servers</description>
+    <url>https://github.com/hpautonomy/java-user-admin</url>
+
     <licenses>
         <license>
             <name>MIT License</name>
