@@ -9,6 +9,7 @@ import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.user.admin.dto.RoleList;
 import com.hp.autonomy.user.admin.dto.Security;
 import com.hp.autonomy.user.admin.dto.Uid;
@@ -16,10 +17,8 @@ import com.hp.autonomy.user.admin.dto.User;
 import com.hp.autonomy.user.admin.dto.UserList;
 import com.hp.autonomy.user.admin.dto.UserReadUserListDetailsUser;
 import com.hp.autonomy.user.admin.dto.UserRoles;
-import com.hp.autonomy.frontend.configuration.ConfigService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

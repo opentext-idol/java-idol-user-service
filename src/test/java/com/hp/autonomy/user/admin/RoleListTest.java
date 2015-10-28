@@ -8,8 +8,8 @@ package com.hp.autonomy.user.admin;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactoryImpl;
 import com.autonomy.aci.client.services.StAXProcessor;
-import com.hp.autonomy.user.admin.dto.RoleList;
 import com.hp.autonomy.test.xml.XmlTestUtils;
+import com.hp.autonomy.user.admin.dto.RoleList;
 import org.junit.Before;
 import org.junit.Test;
 
