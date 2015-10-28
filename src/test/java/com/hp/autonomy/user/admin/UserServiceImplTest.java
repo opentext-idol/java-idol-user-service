@@ -44,11 +44,11 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class UserAdminTest {
+public class UserServiceImplTest {
 
     private AciService aciService;
 
-    private UserAdmin userAdmin;
+    private UserService userService;
 
     private List<UserReadUserListDetailsUser> users;
     private final List<String> usernames = Arrays.asList("pippo", "richie blackmore", "ian gillan", "bobby rondinelli");
@@ -73,7 +73,7 @@ public class UserAdminTest {
 
         users = Collections.unmodifiableList(userList);
 
-        userAdmin = new UserAdminImpl(userAdminConfig, aciService, processorFactory);
+        userService = new UserServiceImpl(userAdminConfig, aciService, processorFactory);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class UserAdminTest {
                 any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class))
         ).thenReturn(createUser());
 
-        final User user = userAdmin.getUserDetails("bleah");
+        final User user = userService.getUserDetails("bleah");
         assertEquals("bleah", user.getName());
         assertEquals(1, user.getMaxAgents());
     }
@@ -93,7 +93,7 @@ public class UserAdminTest {
                 any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class)))
                 .thenReturn(Collections.emptyList());
 
-        final User user = userAdmin.getUserDetails("bleah");
+        final User user = userService.getUserDetails("bleah");
         assertNull(user);
     }
 
@@ -103,7 +103,7 @@ public class UserAdminTest {
                 any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class)))
                 .thenReturn(createUserRole());
 
-        final List<String> roleList = userAdmin.getUserRole(42);
+        final List<String> roleList = userService.getUserRole(42);
 
         assertEquals(2, roleList.size());
         assertEquals("sigur ros", roleList.get(0));
@@ -116,7 +116,7 @@ public class UserAdminTest {
                 any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class)))
                 .thenReturn(Collections.emptyList());
 
-        assertNull(userAdmin.getUserRole(42));
+        assertNull(userService.getUserRole(42));
     }
 
     @Test
@@ -134,7 +134,7 @@ public class UserAdminTest {
                     Collections.singletonList(getUserRoles4())
                 );
 
-        final List<UserRoles> userRoles = userAdmin.getUsersRoles();
+        final List<UserRoles> userRoles = userService.getUsersRoles();
 
         assertEquals(3, userRoles.size());
 
@@ -159,7 +159,7 @@ public class UserAdminTest {
                     Collections.singletonList(getUserRoles3())
                 );
 
-        final List<UserRoles> userRoles = userAdmin.getUsersRoles("black sabbath");
+        final List<UserRoles> userRoles = userService.getUsersRoles("black sabbath");
 
         assertEquals(2, userRoles.size());
 
@@ -181,7 +181,7 @@ public class UserAdminTest {
                     Collections.singletonList(getUserRoles2())
                 );
 
-        final List<UserRoles> userRoles = userAdmin.getUsersRoles(Arrays.asList("deep purple", "rainbow"));
+        final List<UserRoles> userRoles = userService.getUsersRoles(Arrays.asList("deep purple", "rainbow"));
 
         assertEquals(1, userRoles.size());
 
@@ -201,7 +201,7 @@ public class UserAdminTest {
             Collections.singletonList(getUserRoles4())
         );
 
-        final List<UserRoles> userRoles = userAdmin.getUsersRolesExcept(Arrays.asList("deep purple", "rainbow"));
+        final List<UserRoles> userRoles = userService.getUsersRolesExcept(Arrays.asList("deep purple", "rainbow"));
 
         assertEquals(1, userRoles.size());
 
@@ -284,7 +284,7 @@ public class UserAdminTest {
                 isA(Processor.class)
         )).thenReturn(users);
 
-        final List<UserRoles> output = userAdmin.getAllUsersWithRoles(Arrays.asList("developer", "manager", "cook"));
+        final List<UserRoles> output = userService.getAllUsersWithRoles(Arrays.asList("developer", "manager", "cook"));
 
         assertThat(output, hasSize(5));
 

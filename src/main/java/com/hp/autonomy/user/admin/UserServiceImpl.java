@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Default implementation of {@link UserAdmin}
+ * Default implementation of {@link UserService}
  */
-public class UserAdminImpl implements UserAdmin {
+public class UserServiceImpl implements UserService {
 
     private final AciService aciService;
     private final ConfigService<? extends UserAdminConfig> userAdminConfig;
@@ -36,7 +36,7 @@ public class UserAdminImpl implements UserAdmin {
     private static final String USER_NAME = "UserName";
     private static final String UID = "Uid";
 
-    public UserAdminImpl(final ConfigService<? extends UserAdminConfig> config, final AciService aciService, final IdolAnnotationsProcessorFactory processorFactory) {
+    public UserServiceImpl(final ConfigService<? extends UserAdminConfig> config, final AciService aciService, final IdolAnnotationsProcessorFactory processorFactory) {
         this.userAdminConfig = config;
         this.aciService = aciService;
         this.processorFactory = processorFactory;

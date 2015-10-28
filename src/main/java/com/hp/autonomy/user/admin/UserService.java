@@ -10,7 +10,7 @@ import com.hp.autonomy.user.admin.dto.UserRoles;
 
 import java.util.List;
 
-public interface UserAdmin {
+public interface UserService {
 
     /**
      * Get all the users with all of their respective roles.
