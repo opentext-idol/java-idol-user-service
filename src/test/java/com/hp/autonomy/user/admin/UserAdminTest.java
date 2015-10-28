@@ -360,16 +360,8 @@ public class UserAdminTest {
         return Arrays.asList(users.get(1), users.get(2));
     }
 
-    private List<UserReadUserListDetailsUser> getUsers2() {
-        return Collections.singletonList(users.get(1));
-    }
-
     private List<UserReadUserListDetailsUser> getUsers3() {
         return Arrays.asList(users.get(3), users.get(2));
-    }
-
-    private List<UserReadUserListDetailsUser> getUsers4() {
-        return Collections.singletonList(users.get(3));
     }
 
     private List<RoleList> roleList() {
