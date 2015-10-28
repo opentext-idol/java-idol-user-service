@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.autonomy.user.admin;
+package com.hp.autonomy.user.admin;
 
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciErrorException;
@@ -13,16 +13,17 @@ import com.autonomy.aci.client.services.StAXProcessor;
 import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
-import com.autonomy.user.admin.dto.RoleList;
-import com.autonomy.user.admin.dto.User;
-import com.autonomy.user.admin.dto.UserList;
-import com.autonomy.user.admin.dto.UserReadUserListDetailsUser;
-import com.autonomy.user.admin.dto.UserRoles;
+import com.hp.autonomy.user.admin.dto.RoleList;
+import com.hp.autonomy.user.admin.dto.User;
+import com.hp.autonomy.user.admin.dto.UserList;
+import com.hp.autonomy.user.admin.dto.UserReadUserListDetailsUser;
+import com.hp.autonomy.user.admin.dto.UserRoles;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -3,11 +3,12 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.autonomy.user.admin.dto;
+package com.hp.autonomy.user.admin;
 
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactoryImpl;
 import com.autonomy.aci.client.services.StAXProcessor;
+import com.hp.autonomy.user.admin.dto.RoleList;
 import com.hp.autonomy.test.xml.XmlTestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,26 +21,26 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
-public class UidTest {
+public class RoleListTest {
 
-    private XMLStreamReader uidXmlStreamReader;
+    private XMLStreamReader roleListXMLReader;
     private IdolAnnotationsProcessorFactory processorFactory;
 
     @Before
     public void setUp() throws XMLStreamException {
-        this.uidXmlStreamReader = XmlTestUtils.getResourceAsXMLStreamReader("/userAdd.xml");
+        this.roleListXMLReader = XmlTestUtils.getResourceAsXMLStreamReader("/roleList.xml");
         this.processorFactory = new IdolAnnotationsProcessorFactoryImpl();
     }
 
     @Test
-    public void testUserAddXml(){
-        final StAXProcessor<List<Uid>> listProcessor = processorFactory.listProcessorForClass(Uid.class);
-        final List<Uid> uids = listProcessor.process(this.uidXmlStreamReader);
+    public void licenseInfoParseTest(){
+        final StAXProcessor<List<RoleList>> listProcessor = processorFactory.listProcessorForClass(RoleList.class);
+        final List<RoleList> rolesList = listProcessor.process(this.roleListXMLReader);
 
-        assertThat(uids, hasSize(1));
-        final Uid uid = uids.get(0);
+        assertThat(rolesList, hasSize(1));
+        final RoleList roleList = rolesList.get(0);
 
-        assertThat(uid.getUid(), is(12L));
+        assertThat(roleList.getRoles(), hasSize(2));
+        assertThat(roleList.getRoles().get(1), is("everyone"));
     }
-
 }

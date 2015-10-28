@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.autonomy.user.admin;
+package com.hp.autonomy.user.admin;
 
 import com.autonomy.aci.client.transport.AciServerDetails;
 

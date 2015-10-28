@@ -22,7 +22,7 @@
         <property name="type" value="com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory"/>
     </bean>
 
-    <bean class="com.autonomy.user.admin.UserAdminImpl">
+    <bean class="com.hp.autonomy.user.admin.UserAdminImpl">
         <constructor-arg index="0" ref="configService"/>
         <constructor-arg index="1" ref="aciService"/>
         <constructor-arg index="2" ref="processorFactory"/>

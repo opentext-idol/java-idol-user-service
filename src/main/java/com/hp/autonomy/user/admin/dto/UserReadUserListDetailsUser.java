@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.autonomy.user.admin.dto;
+package com.hp.autonomy.user.admin.dto;
 
 import com.autonomy.aci.client.annotations.IdolDocument;
 

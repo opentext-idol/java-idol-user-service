@@ -3,20 +3,23 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.autonomy.user.admin.dto;
+package com.hp.autonomy.user.admin.dto;
 
 import com.autonomy.aci.client.annotations.IdolDocument;
 import com.autonomy.aci.client.annotations.IdolField;
 import lombok.Getter;
 
-@IdolDocument("responsedata")
-public class Security {
+import java.util.ArrayList;
+import java.util.List;
+
+@IdolDocument(value = "responsedata")
+public class RoleList {
 
     @Getter
-    private boolean authenticated;
+    private final List<String> roles = new ArrayList<>();
 
-    @IdolField("autn:authenticate")
-    public void setAuthenticated(final boolean authenticated) {
-        this.authenticated = authenticated;
+    @IdolField("autn:role")
+    void setRolesProducts(final String role){
+        this.roles.add(role);
     }
 }
