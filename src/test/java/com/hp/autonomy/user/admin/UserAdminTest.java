@@ -13,23 +13,19 @@ import com.autonomy.aci.client.services.StAXProcessor;
 import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.user.admin.dto.RoleList;
 import com.hp.autonomy.user.admin.dto.User;
 import com.hp.autonomy.user.admin.dto.UserList;
 import com.hp.autonomy.user.admin.dto.UserReadUserListDetailsUser;
 import com.hp.autonomy.user.admin.dto.UserRoles;
-import com.hp.autonomy.frontend.configuration.ConfigService;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static com.autonomy.frontend.testing.matchers.EqualsAciParameters.equalsAciParameters;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -48,19 +44,14 @@ import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:applicationContext.xml")
 public class UserAdminTest {
-    @Autowired
+
     private AciService aciService;
 
-    @Autowired
     private ConfigService<UserAdminConfig> userAdminConfig;
 
-    @Autowired
     private UserAdmin userAdmin;
 
-    @Autowired
     private IdolAnnotationsProcessorFactory processorFactory;
 
     private List<UserReadUserListDetailsUser> users;
@@ -68,6 +59,10 @@ public class UserAdminTest {
 
     @Before
     public void setUp() {
+        aciService = mock(AciService.class);
+        userAdminConfig = mock(ConfigService.class);
+        processorFactory = mock(IdolAnnotationsProcessorFactory.class);
+
         when(userAdminConfig.getConfig()).thenReturn(mock(UserAdminConfig.class));
         when(userAdminConfig.getConfig().getCommunityDetails()).thenReturn(mock(AciServerDetails.class));
         when(processorFactory.listProcessorForClass(any(Class.class))).thenReturn(mock(StAXProcessor.class));
@@ -81,6 +76,8 @@ public class UserAdminTest {
         }
 
         users = Collections.unmodifiableList(userList);
+
+        userAdmin = new UserAdminImpl(userAdminConfig, aciService, processorFactory);
     }
 
     @Test
