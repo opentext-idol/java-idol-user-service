@@ -10,6 +10,7 @@ import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactoryImpl;
 import com.autonomy.aci.client.services.StAXProcessor;
 import com.hp.autonomy.test.xml.XmlTestUtils;
 import com.hp.autonomy.user.admin.dto.User;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,10 +45,10 @@ public class UserTest {
         assertEquals(8, user.getUid());
         assertEquals("baz", user.getName());
         assertFalse(user.isLocked());
-        assertEquals(0, user.getLockedLastTime());
+        assertEquals(null, user.getLockedLastTime());
         assertEquals(15, user.getMaxAgents());
         assertEquals(0, user.getNumAgents());
-        assertEquals(1379929725, user.getLastLoggedIn());
+        assertEquals(new DateTime(1379929725L * 1000L), user.getLastLoggedIn());
         assertEquals(0, user.getNumFields());
     }
 }
