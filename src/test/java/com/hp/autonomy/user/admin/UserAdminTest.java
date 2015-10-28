@@ -48,11 +48,7 @@ public class UserAdminTest {
 
     private AciService aciService;
 
-    private ConfigService<UserAdminConfig> userAdminConfig;
-
     private UserAdmin userAdmin;
-
-    private IdolAnnotationsProcessorFactory processorFactory;
 
     private List<UserReadUserListDetailsUser> users;
     private final List<String> usernames = Arrays.asList("pippo", "richie blackmore", "ian gillan", "bobby rondinelli");
@@ -60,8 +56,8 @@ public class UserAdminTest {
     @Before
     public void setUp() {
         aciService = mock(AciService.class);
-        userAdminConfig = mock(ConfigService.class);
-        processorFactory = mock(IdolAnnotationsProcessorFactory.class);
+        final ConfigService<UserAdminConfig> userAdminConfig = mock(ConfigService.class);
+        final IdolAnnotationsProcessorFactory processorFactory = mock(IdolAnnotationsProcessorFactory.class);
 
         when(userAdminConfig.getConfig()).thenReturn(mock(UserAdminConfig.class));
         when(userAdminConfig.getConfig().getCommunityDetails()).thenReturn(mock(AciServerDetails.class));
