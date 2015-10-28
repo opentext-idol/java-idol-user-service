@@ -7,6 +7,13 @@ package com.hp.autonomy.user.admin;
 
 import com.autonomy.aci.client.transport.AciServerDetails;
 
+/**
+ * Interface representing a configuration object that contains the location of a community server.
+ */
 public interface UserAdminConfig {
+
+    /**
+     * @return The details of the community server
+     */
     AciServerDetails getCommunityDetails();
 }

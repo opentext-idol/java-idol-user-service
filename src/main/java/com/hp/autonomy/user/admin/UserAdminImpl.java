@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Default implementation of {@link UserAdmin}
+ */
 public class UserAdminImpl implements UserAdmin {
 
     private final AciService aciService;
