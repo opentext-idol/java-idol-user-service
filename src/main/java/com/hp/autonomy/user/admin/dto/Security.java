@@ -9,9 +9,15 @@ import com.autonomy.aci.client.annotations.IdolDocument;
 import com.autonomy.aci.client.annotations.IdolField;
 import lombok.Getter;
 
+/**
+ * Class for reading a security response out of Community
+ */
 @IdolDocument("responsedata")
 public class Security {
 
+    /**
+     * @return true if the user was authenticated; false otherwise
+     */
     @Getter
     private boolean authenticated;
 

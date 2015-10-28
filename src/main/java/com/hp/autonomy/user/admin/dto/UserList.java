@@ -13,10 +13,16 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for reading a user list out of Community
+ */
 @IdolDocument("responsedata")
 @AllArgsConstructor
 public class UserList {
 
+    /**
+     * @return The list of user names
+     */
     @Getter
     private final List<String> userNames;
 

@@ -7,6 +7,10 @@ package com.hp.autonomy.user.admin.dto;
 
 import com.autonomy.aci.client.annotations.IdolDocument;
 
+/**
+ * Class for reading a user from a UserReadUserListDetails response. This class is identical to {@link User}, but reads
+ * responses starting from a different tag.
+ */
 @IdolDocument("autn:user")
 public class UserReadUserListDetailsUser extends User {
 }

@@ -12,9 +12,15 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for reading a list of roles out of Community
+ */
 @IdolDocument(value = "responsedata")
 public class RoleList {
 
+    /**
+     * @return The list of role names
+     */
     @Getter
     private final List<String> roles = new ArrayList<>();
 

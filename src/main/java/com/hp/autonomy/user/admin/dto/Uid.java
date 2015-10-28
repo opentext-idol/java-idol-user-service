@@ -13,10 +13,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Class for reading a response containing only a uid out of Community
+ */
 @IdolDocument("autn:uid")
 @Data
 public class Uid {
 
+    /**
+     * @return The uid of the user
+     */
     private final long uid;
 
     private Uid(final long uid) {
