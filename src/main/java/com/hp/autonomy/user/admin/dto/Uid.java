@@ -32,7 +32,7 @@ public class Uid {
         private long uid;
 
         @IdolField("autn:uid")
-        public Builder setUid(long uid) {
+        public Builder setUid(final long uid) {
             this.uid = uid;
             return this;
         }

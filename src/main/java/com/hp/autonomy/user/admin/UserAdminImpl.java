@@ -20,6 +20,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class UserAdminImpl implements UserAdmin {
 
     @Override
     public List<UserRoles> getUsersRoles(final String role) {
-        return getUsersRoles(Arrays.asList(role));
+        return getUsersRoles(Collections.singletonList(role));
     }
 
     @Override
@@ -229,7 +230,7 @@ public class UserAdminImpl implements UserAdmin {
                         usersRolesMap.get(user).add(role);
                     }
                 } else {
-                    final List<String> list = new ArrayList<>(Arrays.asList(role));
+                    final List<String> list = new ArrayList<>(Collections.singletonList(role));
                     usersRolesMap.put(user, list);
                 }
             }
