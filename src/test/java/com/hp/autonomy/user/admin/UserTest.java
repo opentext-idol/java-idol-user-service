@@ -20,6 +20,8 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -42,13 +44,13 @@ public class UserTest {
         assertThat(users, hasSize(1));
         final User user = users.get(0);
 
-        assertEquals(8, user.getUid());
-        assertEquals("baz", user.getName());
+        assertThat(user.getUid(), is(8L));
+        assertThat(user.getName(), is("baz"));
         assertFalse(user.isLocked());
-        assertEquals(null, user.getLockedLastTime());
-        assertEquals(15, user.getMaxAgents());
-        assertEquals(0, user.getNumAgents());
-        assertEquals(new DateTime(1379929725L * 1000L), user.getLastLoggedIn());
-        assertEquals(0, user.getNumFields());
+        assertThat(user.getLockedLastTime(), is(nullValue()));
+        assertThat(user.getMaxAgents(), is(15));
+        assertThat(user.getNumAgents(), is(0));
+        assertThat(user.getLastLoggedIn(), is(new DateTime(1379929725L * 1000L)));
+        assertThat(user.getNumFields(), is(0));
     }
 }

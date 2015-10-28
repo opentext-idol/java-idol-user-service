@@ -28,11 +28,15 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.testing.matchers.MatchesAciParameters.equalsAciParameters;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -41,6 +45,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -83,40 +88,39 @@ public class UserServiceImplTest {
         ).thenReturn(createUser());
 
         final User user = userService.getUserDetails("bleah");
-        assertEquals("bleah", user.getName());
-        assertEquals(1, user.getMaxAgents());
+        assertThat(user.getName(), is("bleah"));
+        assertThat(user.getMaxAgents(), is(1));
     }
 
     @Test
     public void getEmptyUserTest() {
         when(aciService.executeAction(
-                any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class)))
-                .thenReturn(Collections.emptyList());
+                any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class))
+        ).thenReturn(Collections.emptyList());
 
         final User user = userService.getUserDetails("bleah");
-        assertNull(user);
+        assertThat(user, is(nullValue()));
     }
 
     @Test
     public void getUserRoleTest() {
         when(aciService.executeAction(
-                any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class)))
-                .thenReturn(createUserRole());
+                any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class))
+        ).thenReturn(createUserRole());
 
         final List<String> roleList = userService.getUserRole(42);
 
-        assertEquals(2, roleList.size());
-        assertEquals("sigur ros", roleList.get(0));
-        assertEquals("solo", roleList.get(1));
+        assertThat(roleList, hasSize(2));
+        assertThat(roleList, contains("sigur ros", "solo"));
     }
 
     @Test
     public void getEmptyUserRoleTest() {
         when(aciService.executeAction(
-                any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class)))
-                .thenReturn(Collections.emptyList());
+                any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class))
+        ).thenReturn(Collections.emptyList());
 
-        assertNull(userService.getUserRole(42));
+        assertThat(userService.getUserRole(42), is(nullValue()));
     }
 
     @Test
@@ -124,25 +128,25 @@ public class UserServiceImplTest {
         final List<RoleList> roles = roleList();
 
         when(aciService.executeAction(
-                any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class)))
-                .thenReturn(
-                    roles,
-                    users,
-                    Collections.singletonList(getUserRoles1()),
-                    Collections.singletonList(getUserRoles2()),
-                    Collections.singletonList(getUserRoles3()),
-                    Collections.singletonList(getUserRoles4())
-                );
+            any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class))
+        ).thenReturn(
+            roles,
+            users,
+            Collections.singletonList(getUserRoles1()),
+            Collections.singletonList(getUserRoles2()),
+            Collections.singletonList(getUserRoles3()),
+            Collections.singletonList(getUserRoles4())
+        );
 
         final List<UserRoles> userRoles = userService.getUsersRoles();
 
-        assertEquals(3, userRoles.size());
+        assertThat(userRoles, hasSize(3));
 
         for (final UserRoles userRole : userRoles) {
             assertThat(usernames, hasItem(userRole.getUsername()));
 
             if (userRole.getUsername().equals("pippo")) {
-                assertEquals(0, userRole.getRoles().size());
+                assertThat(userRole.getRoles(), is(empty()));
             }
         }
     }
@@ -152,16 +156,16 @@ public class UserServiceImplTest {
         final List<RoleList> roles = roleList();
 
         when(aciService.executeAction(
-                any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class)))
-                .thenReturn(
-                    roles,
-                    getUsers3(),
-                    Collections.singletonList(getUserRoles3())
-                );
+                any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class))
+        ).thenReturn(
+            roles,
+            getUsers3(),
+            Collections.singletonList(getUserRoles3())
+        );
 
         final List<UserRoles> userRoles = userService.getUsersRoles("black sabbath");
 
-        assertEquals(2, userRoles.size());
+        assertThat(userRoles, hasSize(2));
 
         for (final UserRoles userRole : userRoles) {
             assertThat(userRole.getRoles(), hasItem("black sabbath"));
@@ -174,20 +178,20 @@ public class UserServiceImplTest {
         final List<RoleList> roles = roleList();
 
         when(aciService.executeAction(
-                any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class)))
-                .thenReturn(
-                    roles,
-                    getUsers1(),
-                    Collections.singletonList(getUserRoles2())
-                );
+            any(AciServerDetails.class), anySetOf(AciParameter.class), any(Processor.class))
+        ).thenReturn(
+            roles,
+            getUsers1(),
+            Collections.singletonList(getUserRoles2())
+        );
 
         final List<UserRoles> userRoles = userService.getUsersRoles(Arrays.asList("deep purple", "rainbow"));
 
-        assertEquals(1, userRoles.size());
+        assertThat(userRoles, hasSize(1));
 
         for (final UserRoles userRole : userRoles) {
             assertThat(userRole.getRoles(), not(hasItems("blue oyster cult")));
-            assertThat(userRole.getUsername(), not("pippo"));
+            assertThat(userRole.getUsername(), is(not("pippo")));
         }
     }
 
@@ -203,7 +207,7 @@ public class UserServiceImplTest {
 
         final List<UserRoles> userRoles = userService.getUsersRolesExcept(Arrays.asList("deep purple", "rainbow"));
 
-        assertEquals(1, userRoles.size());
+        assertThat(userRoles, hasSize(1));
 
         for (final UserRoles userRole : userRoles) {
             assertThat(userRole.getUsername(), not("richie blackmore, pippo"));
@@ -315,25 +319,19 @@ public class UserServiceImplTest {
     }
 
     private List<User> createUser() {
-        final List<User> users = new ArrayList<>();
         final User user = new User();
-
         user.setName("bleah");
         user.setMaxAgents(1);
-        users.add(user);
 
-        return users;
+        return Collections.singletonList(user);
     }
 
     private List<RoleList> createUserRole() {
-        final List<RoleList> roles = new ArrayList<>();
         final RoleList role = new RoleList();
-
         role.getRoles().add("sigur ros");
         role.getRoles().add("solo");
 
-        roles.add(role);
-        return roles;
+        return Collections.singletonList(role);
     }
 
     private UserList getUserRoles1() {
