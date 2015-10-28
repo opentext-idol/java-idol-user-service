@@ -375,8 +375,7 @@ public class UserAdminTest {
     private List<RoleList> roleList() {
         final RoleList roleList = new RoleList();
         roleList.getRoles().addAll(Arrays.asList("deep purple", "rainbow", "black sabbath", "blue oyster cult"));
-        final List<RoleList> list = new ArrayList<>();
-        list.add(roleList);
-        return new ArrayList<>(list);
+
+        return Collections.singletonList(roleList);
     }
 }
