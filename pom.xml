@@ -106,9 +106,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.autonomy.frontend.testing-utils</groupId>
-            <artifactId>frontend-testing-utils</artifactId>
-            <version>1.0.1</version>
+            <groupId>com.hp.autonomy.test</groupId>
+            <artifactId>testing-utils</artifactId>
+            <version>1.1.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

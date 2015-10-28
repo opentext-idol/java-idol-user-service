@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.autonomy.frontend.testing.matchers.EqualsAciParameters.equalsAciParameters;
+import static com.hp.autonomy.frontend.testing.matchers.MatchesAciParameters.equalsAciParameters;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
