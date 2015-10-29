@@ -107,7 +107,6 @@ public class UserServiceImplTest {
 
         final List<String> roleList = userService.getUserRole(42);
 
-        assertThat(roleList, hasSize(2));
         assertThat(roleList, contains("sigur ros", "solo"));
     }
 
