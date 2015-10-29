@@ -1,6 +1,6 @@
 # HP Autonomy Java User Service #
 
-[![Build Status](https://travis-ci.org/hpautonomy/java-user-service.svg?branch=master)](https://travis-ci.org/hpautonomy/java-user-service)
+[![Build Status](https://travis-ci.org/hpautonomy/java-idol-user-service.svg?branch=master)](https://travis-ci.org/hpautonomy/java-idol-user-service)
 
 Library for interacting with IDOL community servers.
 
