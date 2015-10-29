@@ -1,36 +1,42 @@
-package com.autonomy.user.admin;
+/*
+ * Copyright 2013-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 
-import com.autonomy.aci.actions.DontCareAsLongAsItsNotAnErrorProcessor;
-import com.autonomy.aci.actions.idol.user.UserList;
-import com.autonomy.aci.actions.idol.user.UserReadUserListProcessor;
+package com.hp.autonomy.user;
+
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
-import com.autonomy.user.admin.dto.RoleList;
-import com.autonomy.user.admin.dto.Security;
-import com.autonomy.user.admin.dto.Uid;
-import com.autonomy.user.admin.dto.User;
-import com.autonomy.user.admin.dto.UserReadUserListDetailsUser;
-import com.autonomy.user.admin.dto.UserRoles;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.user.dto.RoleList;
+import com.hp.autonomy.user.dto.Security;
+import com.hp.autonomy.user.dto.Uid;
+import com.hp.autonomy.user.dto.User;
+import com.hp.autonomy.user.dto.UserList;
+import com.hp.autonomy.user.dto.UserReadUserListDetailsUser;
+import com.hp.autonomy.user.dto.UserRoles;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserAdminImpl implements UserAdmin {
+/**
+ * Default implementation of {@link UserService}
+ */
+public class UserServiceImpl implements UserService {
 
     private final AciService aciService;
-    private final ConfigService<? extends UserAdminConfig> userAdminConfig;
+    private final ConfigService<? extends UserServiceConfig> userAdminConfig;
     private final IdolAnnotationsProcessorFactory processorFactory;
     private static final String ROLE_NAME = "RoleName";
     private static final String USER_NAME = "UserName";
     private static final String UID = "Uid";
 
-    public UserAdminImpl(final ConfigService<? extends UserAdminConfig> config, final AciService aciService, final IdolAnnotationsProcessorFactory processorFactory) {
+    public UserServiceImpl(final ConfigService<? extends UserServiceConfig> config, final AciService aciService, final IdolAnnotationsProcessorFactory processorFactory) {
         this.userAdminConfig = config;
         this.aciService = aciService;
         this.processorFactory = processorFactory;
@@ -43,7 +49,7 @@ public class UserAdminImpl implements UserAdmin {
 
     @Override
     public List<UserRoles> getUsersRoles(final String role) {
-        return getUsersRoles(Arrays.asList(role));
+        return getUsersRoles(Collections.singletonList(role));
     }
 
     @Override
@@ -104,7 +110,7 @@ public class UserAdminImpl implements UserAdmin {
     public void deleteUser(final long uid) {
         final AciParameters parameters = new AciParameters("UserDelete");
         parameters.add(UID, uid);
-        aciService.executeAction(getCommunity(), parameters, new DontCareAsLongAsItsNotAnErrorProcessor());
+        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
     }
 
     @Override
@@ -113,7 +119,7 @@ public class UserAdminImpl implements UserAdmin {
         parameters.add(UID, uid);
         parameters.add("ResetPassword", true);
         parameters.add("NewPassword", password);
-        aciService.executeAction(getCommunity(), parameters, new DontCareAsLongAsItsNotAnErrorProcessor());
+        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
     }
 
     @Override
@@ -139,7 +145,7 @@ public class UserAdminImpl implements UserAdmin {
     public void addRole(final String role) {
         final AciParameters parameters = new AciParameters("RoleAdd");
         parameters.add(ROLE_NAME, role);
-        aciService.executeAction(getCommunity(), parameters, new DontCareAsLongAsItsNotAnErrorProcessor());
+        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
     }
 
     @Override
@@ -148,7 +154,7 @@ public class UserAdminImpl implements UserAdmin {
         parameters.add(ROLE_NAME, role);
         parameters.add(UID, uid);
 
-        aciService.executeAction(getCommunity(), parameters, new DontCareAsLongAsItsNotAnErrorProcessor());
+        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
     }
 
     @Override
@@ -157,14 +163,14 @@ public class UserAdminImpl implements UserAdmin {
         parameters.add(ROLE_NAME, role);
         parameters.add(UID, uid);
 
-        aciService.executeAction(getCommunity(), parameters, new DontCareAsLongAsItsNotAnErrorProcessor());
+        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
     }
 
     @Override
     public void removeRole(final String role) {
         final AciParameters parameters = new AciParameters("RoleDelete");
         parameters.add(ROLE_NAME, role);
-        aciService.executeAction(getCommunity(), parameters, new DontCareAsLongAsItsNotAnErrorProcessor());
+        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
     }
 
     @Override
@@ -226,7 +232,7 @@ public class UserAdminImpl implements UserAdmin {
                         usersRolesMap.get(user).add(role);
                     }
                 } else {
-                    final List<String> list = new ArrayList<>(Arrays.asList(role));
+                    final List<String> list = new ArrayList<>(Collections.singletonList(role));
                     usersRolesMap.put(user, list);
                 }
             }
@@ -250,7 +256,7 @@ public class UserAdminImpl implements UserAdmin {
     private UserList getUsersWithRole(final String role) {
         final AciParameters parameters = new AciParameters("RoleGetUserList");
         parameters.add(ROLE_NAME, role);
-        return aciService.executeAction(getCommunity(), parameters, new UserReadUserListProcessor());
+        return aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(UserList.class)).get(0);
     }
 
     private AciServerDetails getCommunity() {

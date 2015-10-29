@@ -1,11 +1,16 @@
-package com.autonomy.user.admin;
+/*
+ * Copyright 2013-2015 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 
-import com.autonomy.user.admin.dto.User;
-import com.autonomy.user.admin.dto.UserRoles;
+package com.hp.autonomy.user;
+
+import com.hp.autonomy.user.dto.User;
+import com.hp.autonomy.user.dto.UserRoles;
 
 import java.util.List;
 
-public interface UserAdmin {
+public interface UserService {
 
     /**
      * Get all the users with all of their respective roles.
