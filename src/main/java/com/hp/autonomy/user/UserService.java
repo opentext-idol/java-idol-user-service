@@ -3,10 +3,10 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.user.admin;
+package com.hp.autonomy.user;
 
-import com.hp.autonomy.user.admin.dto.User;
-import com.hp.autonomy.user.admin.dto.UserRoles;
+import com.hp.autonomy.user.dto.User;
+import com.hp.autonomy.user.dto.UserRoles;
 
 import java.util.List;
 

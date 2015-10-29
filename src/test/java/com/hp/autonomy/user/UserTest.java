@@ -3,13 +3,13 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.user.admin;
+package com.hp.autonomy.user;
 
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactoryImpl;
 import com.autonomy.aci.client.services.StAXProcessor;
 import com.hp.autonomy.test.xml.XmlTestUtils;
-import com.hp.autonomy.user.admin.dto.User;
+import com.hp.autonomy.user.dto.User;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
