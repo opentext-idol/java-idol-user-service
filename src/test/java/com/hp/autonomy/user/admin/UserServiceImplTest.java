@@ -58,10 +58,10 @@ public class UserServiceImplTest {
     @Before
     public void setUp() {
         aciService = mock(AciService.class);
-        final ConfigService<UserAdminConfig> userAdminConfig = mock(ConfigService.class);
+        final ConfigService<UserServiceConfig> userAdminConfig = mock(ConfigService.class);
         final IdolAnnotationsProcessorFactory processorFactory = mock(IdolAnnotationsProcessorFactory.class);
 
-        when(userAdminConfig.getConfig()).thenReturn(mock(UserAdminConfig.class));
+        when(userAdminConfig.getConfig()).thenReturn(mock(UserServiceConfig.class));
         when(userAdminConfig.getConfig().getCommunityDetails()).thenReturn(mock(AciServerDetails.class));
         when(processorFactory.listProcessorForClass(any(Class.class))).thenReturn(mock(StAXProcessor.class));
 

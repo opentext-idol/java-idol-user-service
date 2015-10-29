@@ -30,13 +30,13 @@ import java.util.Map;
 public class UserServiceImpl implements UserService {
 
     private final AciService aciService;
-    private final ConfigService<? extends UserAdminConfig> userAdminConfig;
+    private final ConfigService<? extends UserServiceConfig> userAdminConfig;
     private final IdolAnnotationsProcessorFactory processorFactory;
     private static final String ROLE_NAME = "RoleName";
     private static final String USER_NAME = "UserName";
     private static final String UID = "Uid";
 
-    public UserServiceImpl(final ConfigService<? extends UserAdminConfig> config, final AciService aciService, final IdolAnnotationsProcessorFactory processorFactory) {
+    public UserServiceImpl(final ConfigService<? extends UserServiceConfig> config, final AciService aciService, final IdolAnnotationsProcessorFactory processorFactory) {
         this.userAdminConfig = config;
         this.aciService = aciService;
         this.processorFactory = processorFactory;
