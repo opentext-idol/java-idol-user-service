@@ -53,7 +53,7 @@ public class UserServiceImplTest {
 
     private AciService aciService;
 
-    private UserService userService;
+    private UserServiceImpl userService;
 
     private List<UserReadUserListDetailsUser> users;
     private final List<String> usernames = Arrays.asList("pippo", "richie blackmore", "ian gillan", "bobby rondinelli");
