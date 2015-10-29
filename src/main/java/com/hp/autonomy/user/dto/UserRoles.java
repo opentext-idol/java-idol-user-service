@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * A username with a uid and a list of roles
  */
 @Data
 @AllArgsConstructor
