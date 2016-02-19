@@ -5,8 +5,7 @@
 
 package com.hp.autonomy.user;
 
-import com.hp.autonomy.user.dto.User;
-import com.hp.autonomy.user.dto.UserRoles;
+import com.hp.autonomy.types.idol.User;
 
 import java.util.List;
 

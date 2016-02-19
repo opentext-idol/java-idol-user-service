@@ -47,7 +47,10 @@
             <organizationUrl>http://www.hp.com</organizationUrl>
         </developer>
         <developer>
-            <name>Luca Mandrioli</name>
+            <name>Ivo Miller</name>
+            <email>ivo.miller@hpe.com</email>
+            <organization>HP</organization>
+            <organizationUrl>http://www.hpe.com</organizationUrl>
         </developer>
     </developers>
 
@@ -64,9 +67,19 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>aci-types</artifactId>
+            <version>0.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend</groupId>
+            <artifactId>idol-utils</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.hp.autonomy.aci.client</groupId>
-            <artifactId>aci-annotations-processor</artifactId>
-            <version>1.0.0</version>
+            <artifactId>aci-api</artifactId>
+            <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.configuration</groupId>

@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.user.dto;
+package com.hp.autonomy.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,6 +34,12 @@ public class UserRoles implements Serializable {
      * @serial The uid of the user
      */
     private long uid;
+
+    /**
+     * @return The user security string to add to requests (unescaped)
+     * @serial The user security string to add to requests (unescaped)
+     */
+    private String securityInfo;
 
     /**
      * @return The list of roles the user has

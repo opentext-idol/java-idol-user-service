@@ -5,41 +5,65 @@
 
 package com.hp.autonomy.user;
 
-import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciService;
+import com.autonomy.aci.client.services.Processor;
+import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.user.dto.RoleList;
-import com.hp.autonomy.user.dto.Security;
-import com.hp.autonomy.user.dto.Uid;
-import com.hp.autonomy.user.dto.User;
-import com.hp.autonomy.user.dto.UserList;
-import com.hp.autonomy.user.dto.UserReadUserListDetailsUser;
-import com.hp.autonomy.user.dto.UserRoles;
+import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
+import com.hp.autonomy.types.idol.RolesResponseData;
+import com.hp.autonomy.types.idol.Security;
+import com.hp.autonomy.types.idol.Uid;
+import com.hp.autonomy.types.idol.User;
+import com.hp.autonomy.types.idol.UserDetails;
+import com.hp.autonomy.types.idol.Users;
+import com.hp.autonomy.types.requests.idol.actions.role.RoleActions;
+import com.hp.autonomy.types.requests.idol.actions.role.params.RoleAddParams;
+import com.hp.autonomy.types.requests.idol.actions.role.params.RoleAddUserToRoleParams;
+import com.hp.autonomy.types.requests.idol.actions.role.params.RoleDeleteParams;
+import com.hp.autonomy.types.requests.idol.actions.role.params.RoleGetUserListParams;
+import com.hp.autonomy.types.requests.idol.actions.role.params.RoleRemoveUserFromRoleParams;
+import com.hp.autonomy.types.requests.idol.actions.role.params.RoleUserGetRoleListParams;
+import com.hp.autonomy.types.requests.idol.actions.user.UserActions;
+import com.hp.autonomy.types.requests.idol.actions.user.params.SecurityParams;
+import com.hp.autonomy.types.requests.idol.actions.user.params.UserAddParams;
+import com.hp.autonomy.types.requests.idol.actions.user.params.UserDeleteParams;
+import com.hp.autonomy.types.requests.idol.actions.user.params.UserEditParams;
+import com.hp.autonomy.types.requests.idol.actions.user.params.UserReadParams;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Default implementation of {@link UserService}
  */
 public class UserServiceImpl implements UserService {
-
     private final AciService aciService;
     private final ConfigService<? extends UserServiceConfig> userAdminConfig;
-    private final IdolAnnotationsProcessorFactory processorFactory;
-    private static final String ROLE_NAME = "RoleName";
-    private static final String USER_NAME = "UserName";
-    private static final String UID = "Uid";
+    final Processor<RolesResponseData> rolesProcessor;
+    final Processor<Security> securityProcessor;
+    final Processor<User> userProcessor;
+    final Processor<UserDetails> userDetailsProcessor;
+    final Processor<Users> usersProcessor;
+    final Processor<Uid> uidProcessor;
+    final Processor<Void> emptyProcessor;
 
-    public UserServiceImpl(final ConfigService<? extends UserServiceConfig> config, final AciService aciService, final IdolAnnotationsProcessorFactory processorFactory) {
-        this.userAdminConfig = config;
+    public UserServiceImpl(final ConfigService<? extends UserServiceConfig> config, final AciService aciService, final AciResponseJaxbProcessorFactory processorFactory) {
+        userAdminConfig = config;
         this.aciService = aciService;
-        this.processorFactory = processorFactory;
+        rolesProcessor = processorFactory.createAciResponseProcessor(RolesResponseData.class);
+        securityProcessor = processorFactory.createAciResponseProcessor(Security.class);
+        userProcessor = processorFactory.createAciResponseProcessor(User.class);
+        userDetailsProcessor = processorFactory.createAciResponseProcessor(UserDetails.class);
+        usersProcessor = processorFactory.createAciResponseProcessor(Users.class);
+        uidProcessor = processorFactory.createAciResponseProcessor(Uid.class);
+        emptyProcessor = processorFactory.createEmptyAciResponseProcessor();
     }
 
     @Override
@@ -74,29 +98,25 @@ public class UserServiceImpl implements UserService {
         final User user = getUserDetails(username);
 
         final long uid = user.getUid();
-        return new UserRoles(username, uid, getUserRole(uid));
+        return new UserRoles(username, uid, user.getSecurityinfo(), getUserRole(uid));
     }
 
     @Override
     public User getUserDetails(final String username) {
-        final AciParameters parameters = new AciParameters("UserRead");
-        parameters.add(USER_NAME, username);
+        final AciParameters parameters = new AciParameters(UserActions.UserRead.name());
+        parameters.add(UserReadParams.UserName.name(), username);
+        parameters.add(UserReadParams.SecurityInfo.name(), true);
 
-        final List<User> users = aciService.executeAction(getCommunity(), parameters,
-                processorFactory.listProcessorForClass(User.class));
-
-        return !users.isEmpty() ? users.get(0) : null;
+        return aciService.executeAction(getCommunity(), parameters, userProcessor);
     }
 
     @Override
     public long addUser(final String username, final String password) {
-        final AciParameters parameters = new AciParameters("UserAdd");
-        parameters.add(USER_NAME, username);
-        parameters.add("Password", password);
+        final AciParameters parameters = new AciParameters(UserActions.UserAdd.name());
+        parameters.add(UserAddParams.UserName.name(), username);
+        parameters.add(UserAddParams.Password.name(), password);
 
-        final Uid uid = aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(Uid.class)).get(0);
-
-        return uid.getUid();
+        return aciService.executeAction(getCommunity(), parameters, uidProcessor).getUid();
     }
 
     @Override
@@ -108,83 +128,74 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(final long uid) {
-        final AciParameters parameters = new AciParameters("UserDelete");
-        parameters.add(UID, uid);
-        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
+        final AciParameters parameters = new AciParameters(UserActions.UserDelete.name());
+        parameters.add(UserDeleteParams.UID.name(), uid);
+        aciService.executeAction(getCommunity(), parameters, emptyProcessor);
     }
 
     @Override
     public void resetPassword(final long uid, final String password) {
-        final AciParameters parameters = new AciParameters("UserEdit");
-        parameters.add(UID, uid);
-        parameters.add("ResetPassword", true);
-        parameters.add("NewPassword", password);
-        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
+        final AciParameters parameters = new AciParameters(UserActions.UserEdit.name());
+        parameters.add(UserEditParams.UID.name(), uid);
+        parameters.add(UserEditParams.ResetPassword.name(), true);
+        parameters.add(UserEditParams.NewPassword.name(), password);
+        aciService.executeAction(getCommunity(), parameters, emptyProcessor);
     }
 
     @Override
     public List<String> getUserRole(final long uid) {
-        final AciParameters parameters = new AciParameters("RoleUserGetRoleList");
-        parameters.add(UID, uid);
+        final AciParameters parameters = new AciParameters(RoleActions.RoleUserGetRoleList.name());
+        parameters.add(RoleUserGetRoleListParams.UID.name(), uid);
 
-        final List<RoleList> list = aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(RoleList.class));
-
-        return !list.isEmpty() ? list.get(0).getRoles() : null;
+        return aciService.executeAction(getCommunity(), parameters, rolesProcessor).getRole();
     }
 
     @Override
     public List<String> getRoles() {
-        final AciParameters parameters = new AciParameters("RoleGetRoleList");
-
-        final List<RoleList> list = aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(RoleList.class));
-
-        return !list.isEmpty() ? list.get(0).getRoles() : null;
+        final Set<AciParameter> parameters = new AciParameters(RoleActions.RoleGetRoleList.name());
+        return aciService.executeAction(getCommunity(), parameters, rolesProcessor).getRole();
     }
 
     @Override
     public void addRole(final String role) {
-        final AciParameters parameters = new AciParameters("RoleAdd");
-        parameters.add(ROLE_NAME, role);
-        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
+        final AciParameters parameters = new AciParameters(RoleActions.RoleAdd.name());
+        parameters.add(RoleAddParams.RoleName.name(), role);
+        aciService.executeAction(getCommunity(), parameters, emptyProcessor);
     }
 
     @Override
     public void addUserToRole(final long uid, final String role) {
-        final AciParameters parameters = new AciParameters("RoleAddUserToRole");
-        parameters.add(ROLE_NAME, role);
-        parameters.add(UID, uid);
+        final AciParameters parameters = new AciParameters(RoleActions.RoleAddUserToRole.name());
+        parameters.add(RoleAddUserToRoleParams.RoleName.name(), role);
+        parameters.add(RoleAddUserToRoleParams.UID.name(), uid);
 
-        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
+        aciService.executeAction(getCommunity(), parameters, emptyProcessor);
     }
 
     @Override
     public void removeUserFromRole(final long uid, final String role) {
-        final AciParameters parameters = new AciParameters("RoleRemoveUserFromRole");
-        parameters.add(ROLE_NAME, role);
-        parameters.add(UID, uid);
+        final AciParameters parameters = new AciParameters(RoleActions.RoleRemoveUserFromRole.name());
+        parameters.add(RoleRemoveUserFromRoleParams.RoleName.name(), role);
+        parameters.add(RoleRemoveUserFromRoleParams.UID.name(), uid);
 
-        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
+        aciService.executeAction(getCommunity(), parameters, emptyProcessor);
     }
 
     @Override
     public void removeRole(final String role) {
-        final AciParameters parameters = new AciParameters("RoleDelete");
-        parameters.add(ROLE_NAME, role);
-        aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(EmptyResponse.class));
+        final AciParameters parameters = new AciParameters(RoleActions.RoleDelete.name());
+        parameters.add(RoleDeleteParams.RoleName.name(), role);
+        aciService.executeAction(getCommunity(), parameters, emptyProcessor);
     }
 
     @Override
     public boolean authenticateUser(final String username, final String password, final String method) {
-        final AciParameters parameters = new AciParameters("Security");
-        parameters.put(USER_NAME, username);
-        parameters.put("password", password);
-        parameters.put("repository", method);
+        final AciParameters parameters = new AciParameters(UserActions.Security.name());
+        parameters.put(SecurityParams.UserName.name(), username);
+        parameters.put(SecurityParams.Password.name(), password);
+        parameters.put(SecurityParams.Repository.name(), method);
 
-        return aciService.executeAction(
-                getCommunity(),
-                parameters,
-                processorFactory.listProcessorForClass(Security.class)
-        ).get(0).isAuthenticated();
+        return aciService.executeAction(getCommunity(), parameters, securityProcessor).isAuthenticate();
     }
 
     /**
@@ -194,24 +205,25 @@ public class UserServiceImpl implements UserService {
      * <p>Given a role list, it gets all the users belonging to each role then extracts uids from UserReadUserListDetails.
      * This should minimize the number of calls to community since it's most likely that num(users) >> num(roles).</p>
      *
-     * @param roleList List of roles
+     * @param roleList     List of roles
      * @param includeEmpty Whether to include users who have none of the roles in roleList.
      * @return List of users and uids, with roles taken from roleList.
      */
-    private List<UserRoles> createUserRoles(final List<String> roleList, final boolean includeEmpty) {
-        final List<UserReadUserListDetailsUser> userDetails = getUsers();
-        final Map<String, List<String>> usernamesRolesMap = createUsernameRolesMap(roleList);
+    private List<UserRoles> createUserRoles(final Iterable<String> roleList, final boolean includeEmpty) {
+        final List<User> userDetails = getUsers();
+        final Map<String, List<String>> userNamesRolesMap = createUsernameRolesMap(roleList);
         final List<UserRoles> userRoles = new ArrayList<>();
 
-        for (final UserReadUserListDetailsUser user : userDetails) {
-            final String username = user.getName();
+        for (final User user : userDetails) {
+            final String username = user.getUsername();
             final long uid = user.getUid();
-            final List<String> roles = usernamesRolesMap.get(username);
+            final String securityInfo = user.getSecurityinfo();
+            final List<String> roles = userNamesRolesMap.get(username);
 
             if (roles != null) {
-                userRoles.add(new UserRoles(username, uid, roles));
+                userRoles.add(new UserRoles(username, uid, securityInfo, roles));
             } else if (includeEmpty) {
-                userRoles.add(new UserRoles(username, uid, new ArrayList<String>()));
+                userRoles.add(new UserRoles(username, uid, securityInfo, new ArrayList<String>()));
             }
         }
 
@@ -220,13 +232,11 @@ public class UserServiceImpl implements UserService {
 
     // Returns a map of username to list of role. Only users with at least one of the roles in the roleList are returned,
     // and only the roles contained in the roleList are included in the role lists.
-    private Map<String, List<String>> createUsernameRolesMap(final List<String> roleList) {
+    private Map<String, List<String>> createUsernameRolesMap(final Iterable<String> roleList) {
         final Map<String, List<String>> usersRolesMap = new HashMap<>();
 
         for (final String role : roleList) {
-            final UserList userList = getUsersWithRole(role);
-
-            for (final String user : userList.getUserNames()) {
+            for (final String user : getUsersWithRole(role)) {
                 if (usersRolesMap.containsKey(user)) {
                     if (!usersRolesMap.get(user).contains(role)) {
                         usersRolesMap.get(user).add(role);
@@ -242,21 +252,21 @@ public class UserServiceImpl implements UserService {
     }
 
     // Returns a list of roles present in both the roles parameter and in community
-    private List<String> retainExistingRoles(final List<String> roles) {
+    private Iterable<String> retainExistingRoles(final Collection<String> roles) {
         final List<String> existingRoles = getRoles();
         existingRoles.retainAll(roles);
         return existingRoles;
     }
 
-    private List<UserReadUserListDetailsUser> getUsers() {
-        final AciParameters parameters = new AciParameters("UserReadUserListDetails");
-        return aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(UserReadUserListDetailsUser.class));
+    private List<User> getUsers() {
+        final Set<AciParameter> parameters = new AciParameters(UserActions.UserReadUserListDetails.name());
+        return aciService.executeAction(getCommunity(), parameters, userDetailsProcessor).getUser();
     }
 
-    private UserList getUsersWithRole(final String role) {
-        final AciParameters parameters = new AciParameters("RoleGetUserList");
-        parameters.add(ROLE_NAME, role);
-        return aciService.executeAction(getCommunity(), parameters, processorFactory.listProcessorForClass(UserList.class)).get(0);
+    private Iterable<String> getUsersWithRole(final String role) {
+        final AciParameters parameters = new AciParameters(RoleActions.RoleGetUserList.name());
+        parameters.add(RoleGetUserListParams.RoleName.name(), role);
+        return aciService.executeAction(getCommunity(), parameters, usersProcessor).getUser();
     }
 
     private AciServerDetails getCommunity() {
