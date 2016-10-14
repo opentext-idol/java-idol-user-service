@@ -9,6 +9,7 @@ import com.hp.autonomy.types.idol.User;
 
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public interface UserService {
 
     /**

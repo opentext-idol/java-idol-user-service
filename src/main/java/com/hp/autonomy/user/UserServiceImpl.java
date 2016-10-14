@@ -43,16 +43,17 @@ import java.util.Set;
 /**
  * Default implementation of {@link UserService}
  */
+@SuppressWarnings("WeakerAccess")
 public class UserServiceImpl implements UserService {
     private final AciService aciService;
     private final ConfigService<? extends UserServiceConfig> userAdminConfig;
-    final Processor<RolesResponseData> rolesProcessor;
-    final Processor<Security> securityProcessor;
-    final Processor<User> userProcessor;
-    final Processor<UserDetails> userDetailsProcessor;
-    final Processor<Users> usersProcessor;
-    final Processor<Uid> uidProcessor;
-    final Processor<Void> emptyProcessor;
+    private final Processor<RolesResponseData> rolesProcessor;
+    private final Processor<Security> securityProcessor;
+    private final Processor<User> userProcessor;
+    private final Processor<UserDetails> userDetailsProcessor;
+    private final Processor<Users> usersProcessor;
+    private final Processor<Uid> uidProcessor;
+    private final Processor<Void> emptyProcessor;
 
     public UserServiceImpl(final ConfigService<? extends UserServiceConfig> config, final AciService aciService, final AciResponseJaxbProcessorFactory processorFactory) {
         userAdminConfig = config;
@@ -223,7 +224,7 @@ public class UserServiceImpl implements UserService {
             if (roles != null) {
                 userRoles.add(new UserRoles(username, uid, securityInfo, roles));
             } else if (includeEmpty) {
-                userRoles.add(new UserRoles(username, uid, securityInfo, new ArrayList<String>()));
+                userRoles.add(new UserRoles(username, uid, securityInfo, new ArrayList<>()));
             }
         }
 

@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * A username with a uid and a list of roles
  */
+@SuppressWarnings({"WeakerAccess", "JavaDoc", "unused"})
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,6 +46,7 @@ public class UserRoles implements Serializable {
      * @return The list of roles the user has
      * @serial The list of the user's roles
      */
+    @SuppressWarnings("FieldMayBeFinal")
     private List<String> roles = new ArrayList<>();
 
     public UserRoles(final String username){
