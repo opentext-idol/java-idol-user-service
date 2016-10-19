@@ -73,8 +73,8 @@
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
-            <artifactId>idol-utils</artifactId>
-            <version>1.2.0</version>
+            <artifactId>idol-types</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.aci.client</groupId>

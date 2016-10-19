@@ -11,13 +11,13 @@ import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
-import com.hp.autonomy.types.idol.RolesResponseData;
-import com.hp.autonomy.types.idol.Security;
-import com.hp.autonomy.types.idol.Uid;
-import com.hp.autonomy.types.idol.User;
-import com.hp.autonomy.types.idol.UserDetails;
-import com.hp.autonomy.types.idol.Users;
+import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.hp.autonomy.types.idol.responses.RolesResponseData;
+import com.hp.autonomy.types.idol.responses.Security;
+import com.hp.autonomy.types.idol.responses.Uid;
+import com.hp.autonomy.types.idol.responses.User;
+import com.hp.autonomy.types.idol.responses.UserDetails;
+import com.hp.autonomy.types.idol.responses.Users;
 import com.hp.autonomy.types.requests.idol.actions.role.RoleActions;
 import com.hp.autonomy.types.requests.idol.actions.role.params.RoleAddParams;
 import com.hp.autonomy.types.requests.idol.actions.role.params.RoleAddUserToRoleParams;
@@ -55,16 +55,16 @@ public class UserServiceImpl implements UserService {
     private final Processor<Uid> uidProcessor;
     private final Processor<Void> emptyProcessor;
 
-    public UserServiceImpl(final ConfigService<? extends UserServiceConfig> config, final AciService aciService, final AciResponseJaxbProcessorFactory processorFactory) {
+    public UserServiceImpl(final ConfigService<? extends UserServiceConfig> config, final AciService aciService, final ProcessorFactory processorFactory) {
         userAdminConfig = config;
         this.aciService = aciService;
-        rolesProcessor = processorFactory.createAciResponseProcessor(RolesResponseData.class);
-        securityProcessor = processorFactory.createAciResponseProcessor(Security.class);
-        userProcessor = processorFactory.createAciResponseProcessor(User.class);
-        userDetailsProcessor = processorFactory.createAciResponseProcessor(UserDetails.class);
-        usersProcessor = processorFactory.createAciResponseProcessor(Users.class);
-        uidProcessor = processorFactory.createAciResponseProcessor(Uid.class);
-        emptyProcessor = processorFactory.createEmptyAciResponseProcessor();
+        rolesProcessor = processorFactory.getResponseDataProcessor(RolesResponseData.class);
+        securityProcessor = processorFactory.getResponseDataProcessor(Security.class);
+        userProcessor = processorFactory.getResponseDataProcessor(User.class);
+        userDetailsProcessor = processorFactory.getResponseDataProcessor(UserDetails.class);
+        usersProcessor = processorFactory.getResponseDataProcessor(Users.class);
+        uidProcessor = processorFactory.getResponseDataProcessor(Uid.class);
+        emptyProcessor = processorFactory.getVoidProcessor();
     }
 
     @Override

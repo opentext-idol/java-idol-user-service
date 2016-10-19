@@ -4,13 +4,13 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
-import com.hp.autonomy.types.idol.RolesResponseData;
-import com.hp.autonomy.types.idol.Security;
-import com.hp.autonomy.types.idol.Uid;
-import com.hp.autonomy.types.idol.User;
-import com.hp.autonomy.types.idol.UserDetails;
-import com.hp.autonomy.types.idol.Users;
+import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.hp.autonomy.types.idol.responses.RolesResponseData;
+import com.hp.autonomy.types.idol.responses.Security;
+import com.hp.autonomy.types.idol.responses.Uid;
+import com.hp.autonomy.types.idol.responses.User;
+import com.hp.autonomy.types.idol.responses.UserDetails;
+import com.hp.autonomy.types.idol.responses.Users;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ public class UserServiceTest {
     private ConfigService<UserServiceConfig> configService;
 
     @Mock
-    private AciResponseJaxbProcessorFactory processorFactory;
+    private ProcessorFactory processorFactory;
 
     @Mock
     private AciService aciService;
