@@ -10,8 +10,9 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 /**
  * Interface representing a configuration object that contains the location of a community server.
  */
+@FunctionalInterface
+@SuppressWarnings("WeakerAccess")
 public interface UserServiceConfig {
-
     /**
      * @return The details of the community server
      */

@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * A username with a uid and a list of roles
  */
+@SuppressWarnings({"WeakerAccess", "JavaDoc", "unused"})
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,27 +25,24 @@ public class UserRoles implements Serializable {
     private static final long serialVersionUID = 7516101375412437377L;
 
     /**
-     * @return The name of the user
      * @serial The name of the user
      */
     private String username;
 
     /**
-     * @return The uid of the user
      * @serial The uid of the user
      */
     private long uid;
 
     /**
-     * @return The user security string to add to requests (unescaped)
      * @serial The user security string to add to requests (unescaped)
      */
     private String securityInfo;
 
     /**
-     * @return The list of roles the user has
      * @serial The list of the user's roles
      */
+    @SuppressWarnings("FieldMayBeFinal")
     private List<String> roles = new ArrayList<>();
 
     public UserRoles(final String username){
