@@ -96,7 +96,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserRoles getUser(final String username) {
-        final User user = getUserDetails(username);
+        return getUser(username, false);
+    }
+
+    @Override
+    public UserRoles getUser(final String username, final boolean deferLogin) {
+        final User user = getUserDetails(username, deferLogin);
 
         final long uid = user.getUid();
         return new UserRoles(username, uid, user.getSecurityinfo(), getUserRole(uid));
@@ -104,9 +109,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserDetails(final String username) {
+        return getUserDetails(username, false);
+    }
+
+    @Override
+    public User getUserDetails(final String username, final boolean deferLogin) {
         final AciParameters parameters = new AciParameters(UserActions.UserRead.name());
         parameters.add(UserReadParams.UserName.name(), username);
         parameters.add(UserReadParams.SecurityInfo.name(), true);
+        parameters.add(UserReadParams.DeferLogin.name(), deferLogin);
 
         return aciService.executeAction(getCommunity(), parameters, userProcessor);
     }
