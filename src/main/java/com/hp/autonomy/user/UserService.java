@@ -63,6 +63,17 @@ public interface UserService {
     UserRoles getUser(String username);
 
     /**
+     * Get a user, its uid and all of its roles.
+     *
+     * @param username The user to fetch
+     * @param deferLogin True if the user should be created if it is not found
+     * @return The user and its roles
+     */
+    default UserRoles getUser(String username, boolean deferLogin) {
+        throw new UnsupportedOperationException("Default implementation of method");
+    }
+
+    /**
      * Get the user details for a given username.
      *
      * @param username The user to fetch
@@ -71,9 +82,19 @@ public interface UserService {
     User getUserDetails(String username);
 
     /**
+     * Get the user details for a given username.
+     * @param username The user to fetch
+     * @param deferLogin True if the user should be created if it is not found
+     * @return The user details, or null if the user is not found
+     */
+    default User getUserDetails(String username, boolean deferLogin) {
+        throw new UnsupportedOperationException("Default implementation of method");
+    }
+
+    /**
      * Delete a specific user.
      *
-     * @param uid The uid for the t
+     * @param uid The uid for the the user
      */
     void deleteUser(long uid);
 
