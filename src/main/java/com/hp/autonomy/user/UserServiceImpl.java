@@ -31,6 +31,7 @@ import com.hp.autonomy.types.requests.idol.actions.user.params.UserAddParams;
 import com.hp.autonomy.types.requests.idol.actions.user.params.UserDeleteParams;
 import com.hp.autonomy.types.requests.idol.actions.user.params.UserEditParams;
 import com.hp.autonomy.types.requests.idol.actions.user.params.UserReadParams;
+import com.hp.autonomy.types.requests.idol.actions.user.params.UserReadUserListDetailsParams;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -208,6 +209,16 @@ public class UserServiceImpl implements UserService {
         parameters.put(SecurityParams.Repository.name(), method);
 
         return aciService.executeAction(getCommunity(), parameters, securityProcessor).isAuthenticate();
+    }
+
+    @Override
+    public UserDetails searchUsers(final String searchText, final int startUser, final int maxUsers) {
+        final AciParameters parameters = new AciParameters(UserActions.UserReadUserListDetails.name());
+        parameters.put(UserReadUserListDetailsParams.Match.name(), searchText);
+        parameters.put(UserReadUserListDetailsParams.Start.name(), startUser);
+        parameters.put(UserReadUserListDetailsParams.MaxUsers.name(), maxUsers);
+
+        return aciService.executeAction(getCommunity(), parameters, userDetailsProcessor);
     }
 
     /**
