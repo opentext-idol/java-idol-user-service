@@ -6,6 +6,7 @@
 package com.hp.autonomy.user;
 
 import com.hp.autonomy.types.idol.responses.User;
+import com.hp.autonomy.types.idol.responses.UserDetails;
 
 import java.util.List;
 
@@ -180,4 +181,12 @@ public interface UserService {
      */
     boolean authenticateUser(String username, String password, String method);
 
+    /**
+     * Searches the users list in community.
+     * @param searchText the string to search for
+     * @param startUser the list number of the first user
+     * @param maxUsers the maximum number of users to return
+     * @return a list of users
+     */
+    UserDetails searchUsers(String searchText, int startUser, int maxUsers);
 }
