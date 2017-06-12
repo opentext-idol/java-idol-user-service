@@ -81,6 +81,13 @@ public class UserServiceTest {
     }
 
     @Test
+    public void getUserDetailsFromUid() {
+        final Long uid = 1L;
+        when(aciService.executeAction(any(AciServerDetails.class), any(AciParameters.class), any())).thenReturn(createUser("user1", uid));
+        assertNotNull(userService.getUserDetails(uid));
+    }
+
+    @Test
     public void resetPassword() {
         userService.resetPassword(1L, "password");
         verify(aciService).executeAction(any(AciServerDetails.class), any(AciParameters.class), any());

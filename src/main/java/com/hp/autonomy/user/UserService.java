@@ -83,12 +83,20 @@ public interface UserService {
     User getUserDetails(String username);
 
     /**
+     * Get the user details for a given user uid.
+     *
+     * @param uid The identifier for the user to fetch
+     * @return The user details, or null if the user is not found
+     */
+    User getUserDetails(Long uid);
+
+    /**
      * Get the user details for a given username.
      * @param username The user to fetch
      * @param deferLogin True if the user should be created if it is not found
      * @return The user details, or null if the user is not found
      */
-    default User getUserDetails(String username, boolean deferLogin) {
+    default User getUserDetails(final String username, final boolean deferLogin) {
         throw new UnsupportedOperationException("Default implementation of method");
     }
 
