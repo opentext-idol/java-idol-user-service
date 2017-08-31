@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -44,6 +45,12 @@ public class UserRoles implements Serializable {
      */
     @SuppressWarnings("FieldMayBeFinal")
     private List<String> roles = new ArrayList<>();
+
+    /**
+     * @serial The map of user properties
+     */
+    @SuppressWarnings("FieldMayBeFinal")
+    private LinkedHashMap<String, String> fields = new LinkedHashMap<>();
 
     public UserRoles(final String username){
         this.username = username;
