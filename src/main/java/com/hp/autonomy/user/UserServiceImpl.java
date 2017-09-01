@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
         final User user = getUserDetails(username, deferLogin);
 
         final long uid = user.getUid();
-        return new UserRoles(username, uid, user.getSecurityinfo(), getUserRole(uid));
+        return new UserRoles(username, uid, user.getSecurityinfo(), getUserRole(uid), user.getFields());
     }
 
     @Override
@@ -254,9 +254,9 @@ public class UserServiceImpl implements UserService {
             final List<String> roles = userNamesRolesMap.get(username);
 
             if (roles != null) {
-                userRoles.add(new UserRoles(username, uid, securityInfo, roles));
+                userRoles.add(new UserRoles(username, uid, securityInfo, roles, user.getFields()));
             } else if (includeEmpty) {
-                userRoles.add(new UserRoles(username, uid, securityInfo, new ArrayList<>()));
+                userRoles.add(new UserRoles(username, uid, securityInfo, new ArrayList<>(), user.getFields()));
             }
         }
 
