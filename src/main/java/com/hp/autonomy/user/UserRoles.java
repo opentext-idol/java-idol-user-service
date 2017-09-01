@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.user;
 
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -50,7 +51,7 @@ public class UserRoles implements Serializable {
      * @serial The map of user properties
      */
     @SuppressWarnings("FieldMayBeFinal")
-    private LinkedHashMap<String, String> fields = new LinkedHashMap<>();
+    private Map<String, String> fields = new LinkedHashMap<>();
 
     public UserRoles(final String username){
         this.username = username;
