@@ -8,6 +8,7 @@
     <action>USERREAD</action>
     <response>SUCCESS</response>
     <responsedata>
+        <autn:role>SomeRole</autn:role>
         <autn:uid>8</autn:uid>
         <autn:username>baz</autn:username>
         <autn:locked>false</autn:locked>
