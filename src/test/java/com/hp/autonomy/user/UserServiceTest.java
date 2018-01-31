@@ -196,6 +196,7 @@ public class UserServiceTest {
         user.setUid(uuid);
         user.setUsername(username);
         user.setMaxagents(1);
+        user.getRoles().add("SomeRole");
 
         return user;
     }

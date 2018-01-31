@@ -104,8 +104,7 @@ public class UserServiceImpl implements UserService {
     public UserRoles getUser(final String username, final boolean deferLogin) {
         final User user = getUserDetails(username, deferLogin);
 
-        final long uid = user.getUid();
-        return new UserRoles(username, uid, user.getSecurityinfo(), getUserRole(uid), user.getFields());
+        return new UserRoles(username, user.getUid(), user.getSecurityinfo(), user.getRoles(), user.getFields());
     }
 
     @Override
@@ -119,6 +118,7 @@ public class UserServiceImpl implements UserService {
         parameters.add(UserReadParams.UID.name(), uid);
         parameters.add(UserReadParams.SecurityInfo.name(), true);
         parameters.add(UserReadParams.DeferLogin.name(), false);
+        parameters.add(UserReadParams.RoleList.name(), true);
 
         return aciService.executeAction(getCommunity(), parameters, userProcessor);
     }
@@ -129,6 +129,7 @@ public class UserServiceImpl implements UserService {
         parameters.add(UserReadParams.UserName.name(), username);
         parameters.add(UserReadParams.SecurityInfo.name(), true);
         parameters.add(UserReadParams.DeferLogin.name(), deferLogin);
+        parameters.add(UserReadParams.RoleList.name(), true);
 
         return aciService.executeAction(getCommunity(), parameters, userProcessor);
     }
