@@ -5,6 +5,8 @@
 
 package com.hp.autonomy.user;
 
+import com.hp.autonomy.types.idol.responses.ProfileUser;
+import com.hp.autonomy.types.idol.responses.Profiles;
 import com.hp.autonomy.types.idol.responses.User;
 import com.hp.autonomy.types.idol.responses.UserDetails;
 
@@ -197,4 +199,19 @@ public interface UserService {
      * @return a list of users
      */
     UserDetails searchUsers(String searchText, int startUser, int maxUsers);
+
+    /**
+     * Get the user profiles of a user
+     * @param user the username
+     * @return a list of profiles
+     */
+    Profiles profileRead(String user);
+
+    /**
+     * Profile the user
+     * @param user the username
+     * @param reference the document reference
+     * @return the edited profile
+     */
+    ProfileUser profileUser(String user, String reference);
 }
