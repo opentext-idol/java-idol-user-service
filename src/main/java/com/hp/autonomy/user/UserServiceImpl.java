@@ -10,8 +10,11 @@ import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
+import com.hp.autonomy.aci.content.identifier.reference.ReferencesBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.hp.autonomy.types.idol.responses.ProfileUser;
+import com.hp.autonomy.types.idol.responses.Profiles;
 import com.hp.autonomy.types.idol.responses.RolesResponseData;
 import com.hp.autonomy.types.idol.responses.Security;
 import com.hp.autonomy.types.idol.responses.Uid;
@@ -54,6 +57,8 @@ public class UserServiceImpl implements UserService {
     private final Processor<UserDetails> userDetailsProcessor;
     private final Processor<Users> usersProcessor;
     private final Processor<Uid> uidProcessor;
+    private final Processor<ProfileUser> profileUserProcessor;
+    private final Processor<Profiles> profilesProcessor;
     private final Processor<Void> emptyProcessor;
 
     public UserServiceImpl(final ConfigService<? extends UserServiceConfig> config, final AciService aciService, final ProcessorFactory processorFactory) {
@@ -65,6 +70,8 @@ public class UserServiceImpl implements UserService {
         userDetailsProcessor = processorFactory.getResponseDataProcessor(UserDetails.class);
         usersProcessor = processorFactory.getResponseDataProcessor(Users.class);
         uidProcessor = processorFactory.getResponseDataProcessor(Uid.class);
+        profileUserProcessor = processorFactory.getResponseDataProcessor(ProfileUser.class);
+        profilesProcessor = processorFactory.getResponseDataProcessor(Profiles.class);
         emptyProcessor = processorFactory.getVoidProcessor();
     }
 
@@ -230,6 +237,26 @@ public class UserServiceImpl implements UserService {
         parameters.put(UserReadUserListDetailsParams.MaxUsers.name(), maxUsers);
 
         return aciService.executeAction(getCommunity(), parameters, userDetailsProcessor);
+    }
+
+    @Override
+    public Profiles profileRead(final String user) {
+        final AciParameters parameters = new AciParameters("ProfileRead");
+        parameters.put("Username", user);
+        parameters.put("ShowTerms", true);
+        parameters.put("ShowInfo", true);
+
+        return aciService.executeAction(getCommunity(), parameters, profilesProcessor);
+    }
+
+    @Override
+    public ProfileUser profileUser(final String user, final String reference) {
+        final AciParameters parameters = new AciParameters("ProfileUser");
+        parameters.put("Username", user);
+        parameters.put("Document", new ReferencesBuilder(reference));
+        parameters.put("Mode", "reference");
+
+        return aciService.executeAction(getCommunity(), parameters, profileUserProcessor);
     }
 
     /**

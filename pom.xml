@@ -12,7 +12,7 @@
 
     <groupId>com.hp.autonomy.frontend.user</groupId>
     <artifactId>idol-user-service</artifactId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
 
     <inceptionYear>2013</inceptionYear>
 
@@ -80,7 +80,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>idol-types</artifactId>
-            <version>1.13.0</version>
+            <version>1.14.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.aci.client</groupId>
@@ -91,6 +91,11 @@
             <groupId>com.hp.autonomy.frontend.configuration</groupId>
             <artifactId>configuration-api</artifactId>
             <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.aci.content</groupId>
+            <artifactId>content-parameter-api</artifactId>
+            <version>3.0.1</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
