@@ -3,7 +3,7 @@ jdk:
 - oraclejdk8
 before_install:
 - echo $GPG_KEY > tmp.txt && gpg --batch --passphrase-fd 3 3<tmp.txt secret.gpg.gpg
-script: mvn deploy --settings settings.xml -Prelease
+script: mvn verify -Prelease
 after_success: bash travis.sh
 env:
   global:
