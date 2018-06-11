@@ -1,6 +1,6 @@
-# HP Autonomy Java User Service #
+# Micro Focus IDOL Java User Service #
 
-[![Build Status](https://travis-ci.org/hpe-idol/java-idol-user-service.svg?branch=master)](https://travis-ci.org/hpe-idol/java-idol-user-service)
+[![Build Status](https://travis-ci.org/microfocus-idol/java-idol-user-service.svg?branch=master)](https://travis-ci.org/microfocus-idol/java-idol-user-service)
 
 Library for interacting with IDOL community servers.
 
