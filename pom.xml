@@ -16,7 +16,7 @@
 
     <inceptionYear>2013</inceptionYear>
 
-    <name>HP Autonomy User Service</name>
+    <name>Micro Focus IDOL User Service</name>
     <description>Library for interacting with IDOL community servers</description>
     <url>https://github.com/hpautonomy/java-idol-user-service</url>
 
