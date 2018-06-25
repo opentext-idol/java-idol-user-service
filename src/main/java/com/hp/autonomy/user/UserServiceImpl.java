@@ -146,6 +146,7 @@ public class UserServiceImpl implements UserService {
     public List<String> getUserRole(final long uid) {
         final AciParameters parameters = new AciParameters(RoleActions.RoleUserGetRoleList.name());
         parameters.add(RoleUserGetRoleListParams.UID.name(), uid);
+        parameters.add(RoleUserGetRoleListParams.Recurse.name(), true);
 
         return aciService.executeAction(getCommunity(), parameters, rolesProcessor).getRole();
     }
