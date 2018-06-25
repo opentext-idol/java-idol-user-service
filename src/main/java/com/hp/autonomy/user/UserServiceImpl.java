@@ -126,6 +126,7 @@ public class UserServiceImpl implements UserService {
         parameters.add(UserReadParams.SecurityInfo.name(), true);
         parameters.add(UserReadParams.DeferLogin.name(), false);
         parameters.add(UserReadParams.RoleList.name(), true);
+        parameters.add(UserReadParams.Recurse.name(), true);
 
         return aciService.executeAction(getCommunity(), parameters, userProcessor);
     }
@@ -137,6 +138,7 @@ public class UserServiceImpl implements UserService {
         parameters.add(UserReadParams.SecurityInfo.name(), true);
         parameters.add(UserReadParams.DeferLogin.name(), deferLogin);
         parameters.add(UserReadParams.RoleList.name(), true);
+        parameters.add(UserReadParams.Recurse.name(), true);
 
         return aciService.executeAction(getCommunity(), parameters, userProcessor);
     }
@@ -177,6 +179,7 @@ public class UserServiceImpl implements UserService {
     public List<String> getUserRole(final long uid) {
         final AciParameters parameters = new AciParameters(RoleActions.RoleUserGetRoleList.name());
         parameters.add(RoleUserGetRoleListParams.UID.name(), uid);
+        parameters.add(RoleUserGetRoleListParams.Recurse.name(), true);
 
         return aciService.executeAction(getCommunity(), parameters, rolesProcessor).getRole();
     }
