@@ -66,9 +66,9 @@ public interface UserService {
      * @param pageSize how many users to fetch
      * @param pageStart what page we're on, starts from 1b
      * @param rolename a single role to restrict to.
-     * @return A list of users, uids and their respective roles
+     * @return An object containing a count and a list of users, uids and their respective roles
      */
-    List<UserRoles> getAllUsersWithRoles(List<String> roles, String query, int pageSize, int pageStart, final String rolename);
+    PagedUserRoles getAllUsersWithRoles(List<String> roles, String query, int pageSize, int pageStart, String rolename);
 
     /**
      * Get a user, its uid and all of its roles.

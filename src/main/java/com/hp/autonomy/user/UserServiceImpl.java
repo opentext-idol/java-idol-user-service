@@ -104,18 +104,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserRoles> getAllUsersWithRoles(final List<String> roles, final String query, final int pageSize, final int pageStart, final String rolename) {
-        final List<String> usernames = getUsernames(query, pageSize, pageStart, rolename);
+    public PagedUserRoles getAllUsersWithRoles(final List<String> roles, final String query, final int pageSize, final int pageStart, final String rolename) {
+        final Users rawUsers = getUsernames(query, pageSize, pageStart, rolename);
 
         final List<UserRoles> userRoles = new ArrayList<>();
 
-        for(final String username : usernames) {
+        for(final String username : rawUsers.getUser()) {
             final UserRoles user = getUser(username);
             user.getRoles().retainAll(roles);
             userRoles.add(user);
         }
 
-        return userRoles;
+        return new PagedUserRoles(rawUsers.getTotalusers(), userRoles);
     }
 
     @Override
@@ -343,7 +343,7 @@ public class UserServiceImpl implements UserService {
         return aciService.executeAction(getCommunity(), parameters, userDetailsProcessor).getUser();
     }
 
-    private List<String> getUsernames(
+    private Users getUsernames(
             final String query,
             final int pageSize,
             final int pageStart,
@@ -363,14 +363,14 @@ public class UserServiceImpl implements UserService {
         }
 
         if (pageSize > 0) {
-            parameters.add("MaxUsers", query);
+            parameters.add("MaxUsers", pageSize);
 
             if (pageStart >= 1) {
                 parameters.add("Start", Math.max(0, pageStart - 1) * pageSize);
             }
         }
 
-        return aciService.executeAction(getCommunity(), parameters, usersProcessor).getUser();
+        return aciService.executeAction(getCommunity(), parameters, usersProcessor);
     }
 
     private Iterable<String> getUsersWithRole(final String role) {
