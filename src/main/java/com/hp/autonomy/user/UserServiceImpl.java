@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Default implementation of {@link UserService}
@@ -100,6 +101,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserRoles> getAllUsersWithRoles(final List<String> roles) {
         return createUserRoles(retainExistingRoles(roles), true);
+    }
+
+    @Override
+    public List<UserRoles> getAllUsersWithRoles(final List<String> roles, final String query, final int pageSize, final int pageStart, final String rolename) {
+        final List<String> usernames = getUsernames(query, pageSize, pageStart, rolename);
+
+        final List<UserRoles> userRoles = new ArrayList<>();
+
+        for(final String username : usernames) {
+            final UserRoles user = getUser(username);
+            user.getRoles().retainAll(roles);
+        }
+
+        return userRoles;
     }
 
     @Override
@@ -325,6 +340,36 @@ public class UserServiceImpl implements UserService {
     private List<User> getUsers() {
         final Set<AciParameter> parameters = new AciParameters(UserActions.UserReadUserListDetails.name());
         return aciService.executeAction(getCommunity(), parameters, userDetailsProcessor).getUser();
+    }
+
+    private List<String> getUsernames(
+            final String query,
+            final int pageSize,
+            final int pageStart,
+            final String rolename) {
+        final boolean byRole = StringUtils.isNotBlank(rolename);
+
+        final AciParameters parameters = new AciParameters(
+                byRole ? RoleActions.RoleGetUserList.name()
+                       : UserActions.UserReadUserListDetails.name());
+
+        if (byRole) {
+            parameters.add(RoleGetUserListParams.RoleName.name(), rolename);
+        }
+
+        if (StringUtils.isNotBlank(query)) {
+            parameters.add("Match", query);
+        }
+
+        if (pageSize > 0) {
+            parameters.add("MaxUsers", query);
+
+            if (pageStart >= 1) {
+                parameters.add("Start", Math.max(0, pageStart - 1) * pageSize);
+            }
+        }
+
+        return aciService.executeAction(getCommunity(), parameters, usersProcessor).getUser();
     }
 
     private Iterable<String> getUsersWithRole(final String role) {
