@@ -112,6 +112,7 @@ public class UserServiceImpl implements UserService {
         for(final String username : usernames) {
             final UserRoles user = getUser(username);
             user.getRoles().retainAll(roles);
+            userRoles.add(user);
         }
 
         return userRoles;
@@ -351,7 +352,7 @@ public class UserServiceImpl implements UserService {
 
         final AciParameters parameters = new AciParameters(
                 byRole ? RoleActions.RoleGetUserList.name()
-                       : UserActions.UserReadUserListDetails.name());
+                       : UserActions.UserReadUserList.name());
 
         if (byRole) {
             parameters.add(RoleGetUserListParams.RoleName.name(), rolename);
