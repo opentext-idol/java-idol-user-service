@@ -356,6 +356,7 @@ public class UserServiceImpl implements UserService {
 
         if (byRole) {
             parameters.add(RoleGetUserListParams.RoleName.name(), rolename);
+            parameters.add(RoleGetUserListParams.Recurse.name(), true);
         }
 
         if (StringUtils.isNotBlank(query)) {
