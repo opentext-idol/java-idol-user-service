@@ -49,6 +49,19 @@ public interface UserService {
     List<UserRoles> getAllUsersWithRoles(List<String> roles);
 
     /**
+     * Get a paged portion of the users and uids in community as a list of UserRoles. The UserRoles' roles will only contain zero or
+     * more of the roles listed in roles.
+     *
+     * @param roles The roles to include in the UserRoles' roles list
+     * @param query the filter string to filter by
+     * @param pageSize how many users to fetch
+     * @param pageStart what page we're on, starts from 1b
+     * @param rolename a single role to restrict to.
+     * @return An object containing a count and a list of users, uids and their respective roles
+     */
+    PagedUserRoles getAllUsersWithRoles(List<String> roles, String query, int pageSize, int pageStart, String rolename);
+
+    /**
      * Get a user, its uid and all of its roles.
      * @param username The user to fetch
      * @return The user and its roles
