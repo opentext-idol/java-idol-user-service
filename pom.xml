@@ -12,7 +12,7 @@
 
     <groupId>com.hp.autonomy.frontend.user</groupId>
     <artifactId>idol-user-service</artifactId>
-    <version>3.6.0</version>
+    <version>3.7.0</version>
 
     <inceptionYear>2013</inceptionYear>
 
@@ -66,12 +66,12 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>aci-types</artifactId>
-            <version>0.23.0</version>
+            <version>0.25.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>idol-types</artifactId>
-            <version>1.14.0</version>
+            <version>1.17.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.aci.client</groupId>
