@@ -110,6 +110,7 @@ public class UserServiceImpl implements UserService {
         final List<UserRoles> userRoles = new ArrayList<>();
 
         for(final String username : rawUsers.getUser()) {
+            // Get user details without password, so no securityinfo string
             final UserRoles user = getUser(username);
             user.getRoles().retainAll(roles);
             userRoles.add(user);
@@ -126,6 +127,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserRoles getUser(final String username, final boolean deferLogin) {
         final User user = getUserDetails(username, deferLogin);
+
+        return new UserRoles(username, user.getUid(), user.getSecurityinfo(), user.getRoles(), user.getFields());
+    }
+
+    @Override
+    public UserRoles getUser(final String username, final boolean deferLogin, final String password) {
+        final User user = getUserDetails(username, deferLogin, password);
 
         return new UserRoles(username, user.getUid(), user.getSecurityinfo(), user.getRoles(), user.getFields());
     }
@@ -149,12 +157,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserDetails(final String username, final boolean deferLogin) {
+        return getUserDetails(username, deferLogin, null);
+    }
+
+    @Override
+    public User getUserDetails(final String username, final boolean deferLogin, final String password) {
         final AciParameters parameters = new AciParameters(UserActions.UserRead.name());
         parameters.add(UserReadParams.UserName.name(), username);
-        parameters.add(UserReadParams.SecurityInfo.name(), true);
         parameters.add(UserReadParams.DeferLogin.name(), deferLogin);
         parameters.add(UserReadParams.RoleList.name(), true);
         parameters.add(UserReadParams.Recurse.name(), true);
+
+        if (StringUtils.isNotEmpty(password)) {
+            parameters.add(UserReadParams.Password.name(), password);
+            parameters.add(UserReadParams.SecurityInfo.name(), true);
+        }
 
         return aciService.executeAction(getCommunity(), parameters, userProcessor);
     }
@@ -195,6 +212,15 @@ public class UserServiceImpl implements UserService {
     public List<String> getUserRole(final long uid) {
         final AciParameters parameters = new AciParameters(RoleActions.RoleUserGetRoleList.name());
         parameters.add(RoleUserGetRoleListParams.UID.name(), uid);
+        parameters.add(RoleUserGetRoleListParams.Recurse.name(), true);
+
+        return aciService.executeAction(getCommunity(), parameters, rolesProcessor).getRole();
+    }
+
+    @Override
+    public List<String> getUserRole(final String username) {
+        final AciParameters parameters = new AciParameters(RoleActions.RoleUserGetRoleList.name());
+        parameters.add(RoleUserGetRoleListParams.UserName.name(), username);
         parameters.add(RoleUserGetRoleListParams.Recurse.name(), true);
 
         return aciService.executeAction(getCommunity(), parameters, rolesProcessor).getRole();
