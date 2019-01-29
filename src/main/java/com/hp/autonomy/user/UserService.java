@@ -90,6 +90,18 @@ public interface UserService {
     }
 
     /**
+     * Get a user, its uid and all of its roles.
+     *
+     * @param username The user to fetch
+     * @param deferLogin True if the user should be created if it is not found
+     * @param password password used for authentication
+     * @return The user and its roles
+     */
+    default UserRoles getUser(String username, boolean deferLogin, String password) {
+        throw new UnsupportedOperationException("Default implementation of method");
+    }
+
+    /**
      * Get the user details for a given username.
      *
      * @param username The user to fetch
@@ -112,6 +124,17 @@ public interface UserService {
      * @return The user details, or null if the user is not found
      */
     default User getUserDetails(final String username, final boolean deferLogin) {
+        throw new UnsupportedOperationException("Default implementation of method");
+    }
+
+    /**
+     * Get the user details for a given username.
+     * @param username The user to fetch
+     * @param deferLogin True if the user should be created if it is not found
+     * @param password user password
+     * @return The user details, or null if the user is not found
+     */
+    default User getUserDetails(String username, boolean deferLogin, String password) {
         throw new UnsupportedOperationException("Default implementation of method");
     }
 
@@ -156,6 +179,13 @@ public interface UserService {
      * @return A list of roles to which the user belongs
      */
     List<String> getUserRole(long uid);
+
+    /**
+     * Get all of the roles to which a user belongs
+     * @param username Specify the user by username
+     * @return A list of roles to which the user belongs
+     */
+    List<String> getUserRole(String username);
 
     /**
      * Get all the roles in community
