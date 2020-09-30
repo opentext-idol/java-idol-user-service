@@ -5,16 +5,13 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.RolesResponseData;
-import com.hp.autonomy.types.idol.responses.Security;
-import com.hp.autonomy.types.idol.responses.Uid;
-import com.hp.autonomy.types.idol.responses.User;
-import com.hp.autonomy.types.idol.responses.UserDetails;
-import com.hp.autonomy.types.idol.responses.Users;
+import com.hp.autonomy.types.idol.responses.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
@@ -39,8 +36,8 @@ public class UserServiceTest {
     @Mock
     private AciService aciService;
 
-    @Mock
-    private AciServerDetails aciServerDetails;
+    @Mock private AciServerDetails communityAciServerDetails;
+    @Mock private AciServerDetails agentStoreAciServerDetails;
 
     @Mock
     private UserServiceConfig config;
@@ -50,7 +47,8 @@ public class UserServiceTest {
     @Before
     public void setUp() {
         when(configService.getConfig()).thenReturn(config);
-        when(config.getCommunityDetails()).thenReturn(aciServerDetails);
+        when(config.getCommunityDetails()).thenReturn(communityAciServerDetails);
+        when(config.getCommunityAgentStoreDetails()).thenReturn(agentStoreAciServerDetails);
 
         userService = new UserServiceImpl(configService, aciService, processorFactory);
     }
@@ -85,6 +83,72 @@ public class UserServiceTest {
         final Long uid = 1L;
         when(aciService.executeAction(any(AciServerDetails.class), any(AciParameters.class), any())).thenReturn(createUser("user1", uid));
         assertNotNull(userService.getUserDetails(uid));
+    }
+
+    @Test
+    public void getUsersDetails_allSafe() {
+        final List<User> mockUsers = Arrays.asList(
+            createUser("u1", 3), createUser("u2", 6), createUser("u3", 7)
+        );
+        when(aciService.executeAction(any(), any(), any()))
+            .thenReturn(mockUserDetailsResponse(mockUsers));
+
+        // note: u4 doesn't exist
+        final List<User> results = userService.getUsersDetails(
+            Arrays.asList("u1", "u2", "u3", "u4"));
+        assertEquals(mockUsers, results);
+
+        final ArgumentCaptor<AciParameters> paramsCaptor = new ArgumentCaptor<>();
+        verify(aciService).executeAction(
+            any(AciServerDetails.class), paramsCaptor.capture(), any());
+        final AciParameters params = paramsCaptor.getValue();
+        assertEquals("UserReadUserListDetails", params.get("action"));
+        assertEquals("u1,u2,u3,u4", params.get("match"));
+        assertEquals("4", params.get("maxusers"));
+    }
+
+    @Test
+    public void getUsersDetails_someUnsafe() {
+        when(aciService.executeAction(any(), any(), any())).thenAnswer(inv -> {
+            final AciParameters params = (AciParameters) inv.getArguments()[1];
+            final String action = params.get("action");
+            if (action.equals("UserReadUserListDetails")) {
+                return mockUserDetailsResponse(
+                    Arrays.asList(createUser("u1", 3), createUser("u2", 6)));
+            } else {
+                return createUser(params.get("username"), 99);
+            }
+        });
+
+        final List<User> results = userService.getUsersDetails(
+            Arrays.asList("u1", ",unsafe", "u2", "uns?afe", "unsafe*"));
+        // User doesn't implement `equals`
+        assertEquals(5, results.size());
+        assertEquals("u1", results.get(0).getUsername());
+        assertEquals("u2", results.get(1).getUsername());
+        assertEquals(",unsafe", results.get(2).getUsername());
+        assertEquals("uns?afe", results.get(3).getUsername());
+        assertEquals("unsafe*", results.get(4).getUsername());
+
+        final ArgumentCaptor<AciParameters> paramsCaptor = new ArgumentCaptor<>();
+        verify(aciService, Mockito.times(4)).executeAction(
+            any(AciServerDetails.class), paramsCaptor.capture(), any());
+        final List<AciParameters> allParams = paramsCaptor.getAllValues();
+
+        final AciParameters listParams = allParams.get(0);
+        assertEquals("UserReadUserListDetails", listParams.get("action"));
+        assertEquals("u1,u2", listParams.get("match"));
+        assertEquals("2", listParams.get("maxusers"));
+
+        final AciParameters getParams1 = allParams.get(1);
+        assertEquals("UserRead", getParams1.get("action"));
+        assertEquals(",unsafe", getParams1.get("username"));
+        final AciParameters getParams2 = allParams.get(2);
+        assertEquals("UserRead", getParams2.get("action"));
+        assertEquals("uns?afe", getParams2.get("username"));
+        final AciParameters getParams3 = allParams.get(3);
+        assertEquals("UserRead", getParams3.get("action"));
+        assertEquals("unsafe*", getParams3.get("username"));
     }
 
     @Test
@@ -173,6 +237,29 @@ public class UserServiceTest {
         mockUserRoles(Arrays.asList("Role1", "Role2", "Role3", "Role4"));
         final List<UserRoles> usersRoles = userService.getAllUsersWithRoles(Arrays.asList("Role1", "Role2", "Role3"));
         assertThat(usersRoles, hasSize(3));
+    }
+
+    @Test
+    public void getRelatedToSearch() {
+        final QueryResponseData mockResults = new QueryResponseData();
+        when(aciService.executeAction(any(), any(), any())).thenReturn(mockResults);
+        final QueryResponseData results =
+            userService.getRelatedToSearch("p db", "experts", "farming", 3, 40);
+
+        assertEquals(mockResults, results);
+
+        final ArgumentCaptor<AciParameters> paramsCaptor = new ArgumentCaptor<>();
+        verify(aciService).executeAction(any(AciServerDetails.class), paramsCaptor.capture(), any());
+        final AciParameters params = paramsCaptor.getValue();
+        assertEquals("Query", params.get("action"));
+        assertEquals("p db", params.get("databasematch"));
+        assertEquals("MATCH{experts}:NAMEDAREA", params.get("fieldtext"));
+        assertEquals("farming", params.get("text"));
+        assertEquals("false", params.get("weighfieldtext"));
+        assertEquals("fields", params.get("print"));
+        assertEquals("username,name", params.get("printfields"));
+        assertEquals("3", params.get("start"));
+        assertEquals("40", params.get("maxresults"));
     }
 
     private void mockUserRoles(final Collection<String> roles) {

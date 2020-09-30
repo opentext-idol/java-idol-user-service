@@ -1,14 +1,11 @@
 /*
- * Copyright 2013-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2013-2015 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 package com.hp.autonomy.user;
 
-import com.hp.autonomy.types.idol.responses.ProfileUser;
-import com.hp.autonomy.types.idol.responses.Profiles;
-import com.hp.autonomy.types.idol.responses.User;
-import com.hp.autonomy.types.idol.responses.UserDetails;
+import com.hp.autonomy.types.idol.responses.*;
 
 import java.util.List;
 
@@ -139,6 +136,12 @@ public interface UserService {
     }
 
     /**
+     * Get details for multiple users.  This is the same as calling {@link #getUserDetails(String)}
+     * for each user in turn, but faster.
+     */
+    List<User> getUsersDetails(List<String> usernames);
+
+    /**
      * Delete a specific user.
      *
      * @param uid The uid for the the user
@@ -257,4 +260,25 @@ public interface UserService {
      * @return the edited profile
      */
     ProfileUser profileUser(String user, String reference);
+
+    /**
+     * Find users related to a search via profiles.  Uses the Community server's AgentStore.
+     *
+     * @param agentStoreProfilesDatabase database in AgentStore containing user profiles
+     * @param namedArea named area within the profiles database to use
+     * @param searchText find profiles similar to this text
+     * @param start number of the first result to return, starting from 1
+     * @param maxProfiles maximum number of results to return (before limiting using `start`
+     * @return Search results, as documents representing user profiles.  Documents will generally
+     *         have a USERNAME or NAME field.  The same user may occur multiple times, via different
+     *         profiles.
+     */
+    QueryResponseData getRelatedToSearch(
+        String agentStoreProfilesDatabase,
+        String namedArea,
+        String searchText,
+        int start,
+        int maxProfiles
+    );
+
 }

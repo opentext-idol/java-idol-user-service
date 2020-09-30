@@ -10,46 +10,31 @@ import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
+import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.aci.content.identifier.reference.ReferencesBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.ProfileUser;
-import com.hp.autonomy.types.idol.responses.Profiles;
-import com.hp.autonomy.types.idol.responses.RolesResponseData;
-import com.hp.autonomy.types.idol.responses.Security;
-import com.hp.autonomy.types.idol.responses.Uid;
-import com.hp.autonomy.types.idol.responses.User;
-import com.hp.autonomy.types.idol.responses.UserDetails;
-import com.hp.autonomy.types.idol.responses.Users;
+import com.hp.autonomy.types.idol.responses.*;
 import com.hp.autonomy.types.requests.idol.actions.role.RoleActions;
-import com.hp.autonomy.types.requests.idol.actions.role.params.RoleAddParams;
-import com.hp.autonomy.types.requests.idol.actions.role.params.RoleAddUserToRoleParams;
-import com.hp.autonomy.types.requests.idol.actions.role.params.RoleDeleteParams;
-import com.hp.autonomy.types.requests.idol.actions.role.params.RoleGetUserListParams;
-import com.hp.autonomy.types.requests.idol.actions.role.params.RoleRemoveUserFromRoleParams;
-import com.hp.autonomy.types.requests.idol.actions.role.params.RoleUserGetRoleListParams;
+import com.hp.autonomy.types.requests.idol.actions.role.params.*;
 import com.hp.autonomy.types.requests.idol.actions.user.UserActions;
-import com.hp.autonomy.types.requests.idol.actions.user.params.SecurityParams;
-import com.hp.autonomy.types.requests.idol.actions.user.params.UserAddParams;
-import com.hp.autonomy.types.requests.idol.actions.user.params.UserDeleteParams;
-import com.hp.autonomy.types.requests.idol.actions.user.params.UserEditParams;
-import com.hp.autonomy.types.requests.idol.actions.user.params.UserReadParams;
-import com.hp.autonomy.types.requests.idol.actions.user.params.UserReadUserListDetailsParams;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.hp.autonomy.types.requests.idol.actions.user.params.*;
 import org.apache.commons.lang.StringUtils;
+
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of {@link UserService}
  */
 @SuppressWarnings("WeakerAccess")
 public class UserServiceImpl implements UserService {
+    /**
+     * Pattern matching usernames which are safe to use directly in the Match parameter.
+     */
+    private static final Pattern SAFE_USERNAME_PATTERN = Pattern.compile("[^?*,]+");
+
     private final AciService aciService;
     private final ConfigService<? extends UserServiceConfig> userAdminConfig;
     private final Processor<RolesResponseData> rolesProcessor;
@@ -61,6 +46,7 @@ public class UserServiceImpl implements UserService {
     private final Processor<ProfileUser> profileUserProcessor;
     private final Processor<Profiles> profilesProcessor;
     private final Processor<Void> emptyProcessor;
+    private final Processor<QueryResponseData> queryResponseProcessor;
 
     public UserServiceImpl(final ConfigService<? extends UserServiceConfig> config, final AciService aciService, final ProcessorFactory processorFactory) {
         userAdminConfig = config;
@@ -74,6 +60,7 @@ public class UserServiceImpl implements UserService {
         profileUserProcessor = processorFactory.getResponseDataProcessor(ProfileUser.class);
         profilesProcessor = processorFactory.getResponseDataProcessor(Profiles.class);
         emptyProcessor = processorFactory.getVoidProcessor();
+        queryResponseProcessor = processorFactory.getResponseDataProcessor(QueryResponseData.class);
     }
 
     @Override
@@ -174,6 +161,34 @@ public class UserServiceImpl implements UserService {
         }
 
         return aciService.executeAction(getCommunity(), parameters, userProcessor);
+    }
+
+    @Override
+    public List<User> getUsersDetails(final List<String> usernames) {
+        // grouped by 'is safe'
+        final Map<Boolean, List<String>> groupedUsernames = usernames.stream()
+            .collect(Collectors.groupingBy(name -> SAFE_USERNAME_PATTERN.matcher(name).matches()));
+        final List<User> users = new ArrayList<>();
+
+        // there's no way to escape wildcard characters in UserReadUserListDetails's Match
+        // parameter, so request problematic users separately
+        final List<String> safeUsernames = groupedUsernames.get(true);
+        if (safeUsernames != null) {
+            final AciParameters params =
+                new AciParameters(UserActions.UserReadUserListDetails.name());
+            params.add(UserReadUserListDetailsParams.Match.name(), String.join(",", safeUsernames));
+            params.add(UserReadUserListDetailsParams.MaxUsers.name(), safeUsernames.size());
+            users.addAll(aciService.executeAction(
+                getCommunity(), params, userDetailsProcessor).getUser());
+        }
+
+        for (final String username :
+            groupedUsernames.getOrDefault(false, Collections.emptyList())
+        ) {
+            users.add(getUserDetails(username));
+        }
+
+        return users;
     }
 
     @Override
@@ -304,6 +319,30 @@ public class UserServiceImpl implements UserService {
         return aciService.executeAction(getCommunity(), parameters, profileUserProcessor);
     }
 
+    @Override
+    public QueryResponseData getRelatedToSearch(
+        final String agentStoreProfilesDatabase,
+        final String namedArea,
+        final String searchText,
+        final int start,
+        final int maxProfiles
+    ) {
+        // we don't use the Community action because it doesn't provide decent paging of results
+        // this is essentially what Community does, but we restrict to profiles
+        final AciParameters parameters = new AciParameters("Query");
+        parameters.put("DatabaseMatch", agentStoreProfilesDatabase);
+        parameters.put("FieldText", new MATCH("NAMEDAREA", namedArea));
+        parameters.put("Text", searchText);
+        parameters.put("WeighFieldText", false);
+        parameters.put("Print", "fields");
+        parameters.put("PrintFields", "username,name");
+        parameters.put("Start", start);
+        parameters.put("MaxResults", maxProfiles);
+
+        return aciService.executeAction(
+            getAgentStore(), parameters, queryResponseProcessor);
+    }
+
     /**
      * <p>If includeEmpty is false, returns a list of UserRoles containing only users with one or more of the roles
      * listed in roleList. If it is true, the list also includes users without any of the given roles. In either case,
@@ -409,4 +448,9 @@ public class UserServiceImpl implements UserService {
     private AciServerDetails getCommunity() {
         return userAdminConfig.getConfig().getCommunityDetails();
     }
+
+    private AciServerDetails getAgentStore() {
+        return userAdminConfig.getConfig().getCommunityAgentStoreDetails();
+    }
+
 }
