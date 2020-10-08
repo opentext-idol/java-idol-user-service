@@ -327,8 +327,9 @@ public class UserServiceImpl implements UserService {
         final int start,
         final int maxProfiles
     ) {
-        // we don't use the Community action because it doesn't provide decent paging of results
-        // this is essentially what Community does, but we restrict to profiles
+        // we don't use the Community action because it always checks the 'default' named area as
+        // well as the one we provide
+        // this query is essentially what Community does, but we restrict to profiles
         final AciParameters parameters = new AciParameters("Query");
         parameters.put("DatabaseMatch", agentStoreProfilesDatabase);
         parameters.put("FieldText", new MATCH("NAMEDAREA", namedArea));
