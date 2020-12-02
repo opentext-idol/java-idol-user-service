@@ -50,6 +50,7 @@ public class UserServiceImpl implements UserService {
     private final Processor<Security> securityProcessor;
     private final Processor<User> userProcessor;
     private final Processor<UserDetails> userDetailsProcessor;
+    private final Processor<UserFieldNamesResponse> userFieldNamesProcessor;
     private final Processor<Users> usersProcessor;
     private final Processor<Uid> uidProcessor;
     private final Processor<ProfileUser> profileUserProcessor;
@@ -64,12 +65,20 @@ public class UserServiceImpl implements UserService {
         securityProcessor = processorFactory.getResponseDataProcessor(Security.class);
         userProcessor = processorFactory.getResponseDataProcessor(User.class);
         userDetailsProcessor = processorFactory.getResponseDataProcessor(UserDetails.class);
+        userFieldNamesProcessor =
+            processorFactory.getResponseDataProcessor(UserFieldNamesResponse.class);
         usersProcessor = processorFactory.getResponseDataProcessor(Users.class);
         uidProcessor = processorFactory.getResponseDataProcessor(Uid.class);
         profileUserProcessor = processorFactory.getResponseDataProcessor(ProfileUser.class);
         profilesProcessor = processorFactory.getResponseDataProcessor(Profiles.class);
         emptyProcessor = processorFactory.getVoidProcessor();
         queryResponseProcessor = processorFactory.getResponseDataProcessor(QueryResponseData.class);
+    }
+
+    @Override
+    public UserFieldNamesResponse getAllFieldNames() {
+        final AciParameters parameters = new AciParameters(UserActions.UserGetAllFieldNames.name());
+        return aciService.executeAction(getCommunity(), parameters, userFieldNamesProcessor);
     }
 
     @Override

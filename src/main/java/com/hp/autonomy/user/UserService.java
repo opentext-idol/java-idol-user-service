@@ -13,6 +13,11 @@ import java.util.List;
 public interface UserService {
 
     /**
+     * Get a list of fields used across all users.
+     */
+    UserFieldNamesResponse getAllFieldNames();
+
+    /**
      * Get all the users with all of their respective roles.
      *
      * @return A list of users, uids and all of their respective roles
