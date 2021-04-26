@@ -162,20 +162,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserDetails(final String username, final boolean deferLogin) {
-        return getUserDetails(username, deferLogin, null);
+        return getUserDetails(username, deferLogin, null, false);
     }
 
     @Override
     public User getUserDetails(final String username, final boolean deferLogin, final String password) {
+        return getUserDetails(username, deferLogin, password, true);
+    }
+
+    private User getUserDetails(
+        final String username,
+        final boolean deferLogin,
+        final String password,
+        final boolean includeSecurityInfo
+    ) {
         final AciParameters parameters = new AciParameters(UserActions.UserRead.name());
         parameters.add(UserReadParams.UserName.name(), username);
         parameters.add(UserReadParams.DeferLogin.name(), deferLogin);
         parameters.add(UserReadParams.RoleList.name(), true);
         parameters.add(UserReadParams.Recurse.name(), true);
 
+        if (includeSecurityInfo) {
+            parameters.add(UserReadParams.SecurityInfo.name(), true);
+        }
         if (StringUtils.isNotEmpty(password)) {
             parameters.add(UserReadParams.Password.name(), password);
-            parameters.add(UserReadParams.SecurityInfo.name(), true);
         }
 
         return aciService.executeAction(getCommunity(), parameters, userProcessor);

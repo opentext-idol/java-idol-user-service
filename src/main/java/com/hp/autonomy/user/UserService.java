@@ -92,11 +92,12 @@ public interface UserService {
     }
 
     /**
-     * Get a user, its uid and all of its roles.
+     * Get a user, its uid, all of its roles, and security info.
      *
      * @param username The user to fetch
      * @param deferLogin True if the user should be created if it is not found
-     * @param password password used for authentication
+     * @param password password used for authentication.  If null, then CheckEntitlement must be
+     *                 configured to false
      * @return The user and its roles
      */
     default UserRoles getUser(String username, boolean deferLogin, String password) {
@@ -130,10 +131,10 @@ public interface UserService {
     }
 
     /**
-     * Get the user details for a given username.
+     * Get the user details for a given username, including security info.
      * @param username The user to fetch
      * @param deferLogin True if the user should be created if it is not found
-     * @param password user password
+     * @param password user password.  If null, then CheckEntitlement must be configured to false
      * @return The user details, or null if the user is not found
      */
     default User getUserDetails(String username, boolean deferLogin, String password) {
