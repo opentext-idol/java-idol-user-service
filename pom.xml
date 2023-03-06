@@ -16,7 +16,7 @@
 
     <inceptionYear>2013</inceptionYear>
 
-    <name>Micro Focus IDOL User Service</name>
+    <name>OpenText IDOL User Service</name>
     <description>Library for interacting with IDOL community servers</description>
     <url>https://github.com/microfocus-idol/java-idol-user-service</url>
 
@@ -30,9 +30,6 @@
     <developers>
         <developer>
             <name>Tung Jin Chew</name>
-            <email>tung-jin.chew@microfocus.com</email>
-            <organization>Micro Focus</organization>
-            <organizationUrl>http://www.microfocus.com</organizationUrl>
         </developer>
         <developer>
             <name>Alex Scown</name>

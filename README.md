@@ -1,4 +1,4 @@
-# Micro Focus IDOL Java User Service #
+# OpenText IDOL Java User Service #
 
 [![Build Status](https://travis-ci.org/microfocus-idol/java-idol-user-service.svg?branch=master)](https://travis-ci.org/microfocus-idol/java-idol-user-service)
 
@@ -8,6 +8,6 @@ This repo uses git-flow. develop is the development branch. master is the last k
 
 ## License
 
-(c) Copyright 2014-2020 Micro Focus or one of its affiliates.
+(c) Copyright 2014-2020 OpenText or one of its affiliates.
 
 Licensed under the MIT License (the "License"); you may not use this project except in compliance with the License.
