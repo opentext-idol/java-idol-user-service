@@ -14,7 +14,7 @@
 
 package com.hp.autonomy.user;
 
-import com.hp.autonomy.types.idol.responses.*;
+import com.opentext.idol.types.responses.*;
 
 import java.util.List;
 

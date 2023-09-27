@@ -4,15 +4,15 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.*;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
+import com.opentext.idol.types.responses.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,7 +21,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -98,7 +98,7 @@ public class UserServiceTest {
             Arrays.asList("u1", "u2", "u3", "u4"));
         assertEquals(mockUsers, results);
 
-        final ArgumentCaptor<AciParameters> paramsCaptor = new ArgumentCaptor<>();
+        final ArgumentCaptor<AciParameters> paramsCaptor = ArgumentCaptor.forClass(AciParameters.class);
         verify(aciService).executeAction(
             any(AciServerDetails.class), paramsCaptor.capture(), any());
         final AciParameters params = paramsCaptor.getValue();
@@ -130,7 +130,7 @@ public class UserServiceTest {
         assertEquals("uns?afe", results.get(3).getUsername());
         assertEquals("unsafe*", results.get(4).getUsername());
 
-        final ArgumentCaptor<AciParameters> paramsCaptor = new ArgumentCaptor<>();
+        final ArgumentCaptor<AciParameters> paramsCaptor = ArgumentCaptor.forClass(AciParameters.class);
         verify(aciService, Mockito.times(4)).executeAction(
             any(AciServerDetails.class), paramsCaptor.capture(), any());
         final List<AciParameters> allParams = paramsCaptor.getAllValues();
@@ -248,7 +248,7 @@ public class UserServiceTest {
 
         assertEquals(mockResults, results);
 
-        final ArgumentCaptor<AciParameters> paramsCaptor = new ArgumentCaptor<>();
+        final ArgumentCaptor<AciParameters> paramsCaptor = ArgumentCaptor.forClass(AciParameters.class);
         verify(aciService).executeAction(any(AciServerDetails.class), paramsCaptor.capture(), any());
         final AciParameters params = paramsCaptor.getValue();
         assertEquals("Query", params.get("action"));

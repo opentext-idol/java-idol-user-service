@@ -22,13 +22,13 @@ import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.aci.content.identifier.reference.ReferencesBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.*;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
+import com.opentext.idol.types.responses.*;
 import com.hp.autonomy.types.requests.idol.actions.role.RoleActions;
 import com.hp.autonomy.types.requests.idol.actions.role.params.*;
 import com.hp.autonomy.types.requests.idol.actions.user.UserActions;
 import com.hp.autonomy.types.requests.idol.actions.user.params.*;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.regex.Pattern;
