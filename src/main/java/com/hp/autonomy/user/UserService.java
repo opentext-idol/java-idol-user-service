@@ -164,11 +164,18 @@ public interface UserService {
     void deleteUser(long uid);
 
     /**
+     * Delete a specific user.
+     *
+     * @param username The username for the the user
+     */
+    void deleteUser(String username);
+
+    /**
      * Adds a new user.
      *
      * @param username User name
      * @param password Password
-     * @return user id
+     * @return user id, if available
      */
     long addUser(String username, String password);
 
@@ -178,7 +185,7 @@ public interface UserService {
      * @param username user name
      * @param password user password
      * @param role     user role
-     * @return user id
+     * @return user id, if available
      */
     long addUser(String username, String password, String role);
 
@@ -189,6 +196,14 @@ public interface UserService {
      * @param password new password
      */
     void resetPassword(long uid, String password);
+
+    /**
+     * Resets a user password
+     *
+     * @param username Username for the user to reset
+     * @param password new password
+     */
+    void resetPassword(String username, String password);
 
     /**
      * Get all of the roles to which a user belongs
@@ -228,12 +243,28 @@ public interface UserService {
     void addUserToRole(long uid, String role);
 
     /**
+     * Adds a user to a role
+     *
+     * @param username To associate to a role
+     * @param role Name of the role that will be associated to the user
+     */
+    void addUserToRole(String username, String role);
+
+    /**
      * Removes a user from a role
      *
      * @param uid  User to remove from a role
      * @param role Role name that will be disassociated from the user
      */
     void removeUserFromRole(long uid, String role);
+
+    /**
+     * Removes a user from a role
+     *
+     * @param username User to remove from a role
+     * @param role Role name that will be disassociated from the user
+     */
+    void removeUserFromRole(String username, String role);
 
     /**
      * Remove a role from community

@@ -232,7 +232,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public long addUser(final String username, final String password, final String role) {
         final long uid = addUser(username, password);
-        addUserToRole(uid, role);
+        addUserToRole(username, role);
         return uid;
     }
 
@@ -244,9 +244,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUser(final String username) {
+        final AciParameters parameters = new AciParameters(UserActions.UserDelete.name());
+        parameters.add(UserDeleteParams.UserName.name(), username);
+        aciService.executeAction(getCommunity(), parameters, emptyProcessor);
+    }
+
+    @Override
     public void resetPassword(final long uid, final String password) {
         final AciParameters parameters = new AciParameters(UserActions.UserEdit.name());
         parameters.add(UserEditParams.UID.name(), uid);
+        parameters.add(UserEditParams.ResetPassword.name(), true);
+        parameters.add(UserEditParams.NewPassword.name(), password);
+        aciService.executeAction(getCommunity(), parameters, emptyProcessor);
+    }
+
+    @Override
+    public void resetPassword(final String username, final String password) {
+        final AciParameters parameters = new AciParameters(UserActions.UserEdit.name());
+        parameters.add(UserEditParams.UserName.name(), username);
         parameters.add(UserEditParams.ResetPassword.name(), true);
         parameters.add(UserEditParams.NewPassword.name(), password);
         aciService.executeAction(getCommunity(), parameters, emptyProcessor);
@@ -293,10 +309,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void addUserToRole(final String username, final String role) {
+        final AciParameters parameters = new AciParameters(RoleActions.RoleAddUserToRole.name());
+        parameters.add(RoleAddUserToRoleParams.RoleName.name(), role);
+        parameters.add(RoleAddUserToRoleParams.UserName.name(), username);
+
+        aciService.executeAction(getCommunity(), parameters, emptyProcessor);
+    }
+
+    @Override
     public void removeUserFromRole(final long uid, final String role) {
         final AciParameters parameters = new AciParameters(RoleActions.RoleRemoveUserFromRole.name());
         parameters.add(RoleRemoveUserFromRoleParams.RoleName.name(), role);
         parameters.add(RoleRemoveUserFromRoleParams.UID.name(), uid);
+
+        aciService.executeAction(getCommunity(), parameters, emptyProcessor);
+    }
+
+    @Override
+    public void removeUserFromRole(final String username, final String role) {
+        final AciParameters parameters = new AciParameters(RoleActions.RoleRemoveUserFromRole.name());
+        parameters.add(RoleRemoveUserFromRoleParams.RoleName.name(), role);
+        parameters.add(RoleRemoveUserFromRoleParams.UserName.name(), username);
 
         aciService.executeAction(getCommunity(), parameters, emptyProcessor);
     }

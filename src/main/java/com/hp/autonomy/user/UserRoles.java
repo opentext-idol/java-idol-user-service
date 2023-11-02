@@ -41,7 +41,7 @@ public class UserRoles implements Serializable {
     private String username;
 
     /**
-     * @serial The uid of the user
+     * @serial The uid of the user.  Note: may not be present when using Community behind DAH.
      */
     private long uid;
 
