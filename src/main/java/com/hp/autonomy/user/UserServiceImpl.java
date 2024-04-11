@@ -16,18 +16,18 @@ package com.hp.autonomy.user;
 
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
-import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.transport.AciServerDetails;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.transport.ActionParameter;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.aci.content.identifier.reference.ReferencesBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.opentext.idol.types.marshalling.ProcessorFactory;
-import com.opentext.idol.types.responses.*;
 import com.hp.autonomy.types.requests.idol.actions.role.RoleActions;
 import com.hp.autonomy.types.requests.idol.actions.role.params.*;
 import com.hp.autonomy.types.requests.idol.actions.user.UserActions;
 import com.hp.autonomy.types.requests.idol.actions.user.params.*;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
+import com.opentext.idol.types.responses.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserFieldNamesResponse getAllFieldNames() {
-        final AciParameters parameters = new AciParameters(UserActions.UserGetAllFieldNames.name());
+        final ActionParameters parameters = new ActionParameters(UserActions.UserGetAllFieldNames.name());
         return aciService.executeAction(getCommunity(), parameters, userFieldNamesProcessor);
     }
 
@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserDetails(final Long uid) {
-        final AciParameters parameters = new AciParameters(UserActions.UserRead.name());
+        final ActionParameters parameters = new ActionParameters(UserActions.UserRead.name());
         parameters.add(UserReadParams.UID.name(), uid);
         parameters.add(UserReadParams.SecurityInfo.name(), true);
         parameters.add(UserReadParams.DeferLogin.name(), false);
@@ -176,7 +176,7 @@ public class UserServiceImpl implements UserService {
         final String password,
         final boolean includeSecurityInfo
     ) {
-        final AciParameters parameters = new AciParameters(UserActions.UserRead.name());
+        final ActionParameters parameters = new ActionParameters(UserActions.UserRead.name());
         parameters.add(UserReadParams.UserName.name(), username);
         parameters.add(UserReadParams.DeferLogin.name(), deferLogin);
         parameters.add(UserReadParams.RoleList.name(), true);
@@ -203,8 +203,8 @@ public class UserServiceImpl implements UserService {
         // parameter, so request problematic users separately
         final List<String> safeUsernames = groupedUsernames.get(true);
         if (safeUsernames != null) {
-            final AciParameters params =
-                new AciParameters(UserActions.UserReadUserListDetails.name());
+            final ActionParameters params =
+                new ActionParameters(UserActions.UserReadUserListDetails.name());
             params.add(UserReadUserListDetailsParams.Match.name(), String.join(",", safeUsernames));
             params.add(UserReadUserListDetailsParams.MaxUsers.name(), safeUsernames.size());
             users.addAll(aciService.executeAction(
@@ -222,7 +222,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public long addUser(final String username, final String password) {
-        final AciParameters parameters = new AciParameters(UserActions.UserAdd.name());
+        final ActionParameters parameters = new ActionParameters(UserActions.UserAdd.name());
         parameters.add(UserAddParams.UserName.name(), username);
         parameters.add(UserAddParams.Password.name(), password);
 
@@ -238,21 +238,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(final long uid) {
-        final AciParameters parameters = new AciParameters(UserActions.UserDelete.name());
+        final ActionParameters parameters = new ActionParameters(UserActions.UserDelete.name());
         parameters.add(UserDeleteParams.UID.name(), uid);
         aciService.executeAction(getCommunity(), parameters, emptyProcessor);
     }
 
     @Override
     public void deleteUser(final String username) {
-        final AciParameters parameters = new AciParameters(UserActions.UserDelete.name());
+        final ActionParameters parameters = new ActionParameters(UserActions.UserDelete.name());
         parameters.add(UserDeleteParams.UserName.name(), username);
         aciService.executeAction(getCommunity(), parameters, emptyProcessor);
     }
 
     @Override
     public void resetPassword(final long uid, final String password) {
-        final AciParameters parameters = new AciParameters(UserActions.UserEdit.name());
+        final ActionParameters parameters = new ActionParameters(UserActions.UserEdit.name());
         parameters.add(UserEditParams.UID.name(), uid);
         parameters.add(UserEditParams.ResetPassword.name(), true);
         parameters.add(UserEditParams.NewPassword.name(), password);
@@ -261,7 +261,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void resetPassword(final String username, final String password) {
-        final AciParameters parameters = new AciParameters(UserActions.UserEdit.name());
+        final ActionParameters parameters = new ActionParameters(UserActions.UserEdit.name());
         parameters.add(UserEditParams.UserName.name(), username);
         parameters.add(UserEditParams.ResetPassword.name(), true);
         parameters.add(UserEditParams.NewPassword.name(), password);
@@ -270,7 +270,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<String> getUserRole(final long uid) {
-        final AciParameters parameters = new AciParameters(RoleActions.RoleUserGetRoleList.name());
+        final ActionParameters parameters = new ActionParameters(RoleActions.RoleUserGetRoleList.name());
         parameters.add(RoleUserGetRoleListParams.UID.name(), uid);
         parameters.add(RoleUserGetRoleListParams.Recurse.name(), true);
 
@@ -279,7 +279,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<String> getUserRole(final String username) {
-        final AciParameters parameters = new AciParameters(RoleActions.RoleUserGetRoleList.name());
+        final ActionParameters parameters = new ActionParameters(RoleActions.RoleUserGetRoleList.name());
         parameters.add(RoleUserGetRoleListParams.UserName.name(), username);
         parameters.add(RoleUserGetRoleListParams.Recurse.name(), true);
 
@@ -288,20 +288,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<String> getRoles() {
-        final Set<AciParameter> parameters = new AciParameters(RoleActions.RoleGetRoleList.name());
+        final Set<ActionParameter<?>> parameters = new ActionParameters(RoleActions.RoleGetRoleList.name());
         return aciService.executeAction(getCommunity(), parameters, rolesProcessor).getRole();
     }
 
     @Override
     public void addRole(final String role) {
-        final AciParameters parameters = new AciParameters(RoleActions.RoleAdd.name());
+        final ActionParameters parameters = new ActionParameters(RoleActions.RoleAdd.name());
         parameters.add(RoleAddParams.RoleName.name(), role);
         aciService.executeAction(getCommunity(), parameters, emptyProcessor);
     }
 
     @Override
     public void addUserToRole(final long uid, final String role) {
-        final AciParameters parameters = new AciParameters(RoleActions.RoleAddUserToRole.name());
+        final ActionParameters parameters = new ActionParameters(RoleActions.RoleAddUserToRole.name());
         parameters.add(RoleAddUserToRoleParams.RoleName.name(), role);
         parameters.add(RoleAddUserToRoleParams.UID.name(), uid);
 
@@ -310,7 +310,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addUserToRole(final String username, final String role) {
-        final AciParameters parameters = new AciParameters(RoleActions.RoleAddUserToRole.name());
+        final ActionParameters parameters = new ActionParameters(RoleActions.RoleAddUserToRole.name());
         parameters.add(RoleAddUserToRoleParams.RoleName.name(), role);
         parameters.add(RoleAddUserToRoleParams.UserName.name(), username);
 
@@ -319,7 +319,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void removeUserFromRole(final long uid, final String role) {
-        final AciParameters parameters = new AciParameters(RoleActions.RoleRemoveUserFromRole.name());
+        final ActionParameters parameters = new ActionParameters(RoleActions.RoleRemoveUserFromRole.name());
         parameters.add(RoleRemoveUserFromRoleParams.RoleName.name(), role);
         parameters.add(RoleRemoveUserFromRoleParams.UID.name(), uid);
 
@@ -328,7 +328,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void removeUserFromRole(final String username, final String role) {
-        final AciParameters parameters = new AciParameters(RoleActions.RoleRemoveUserFromRole.name());
+        final ActionParameters parameters = new ActionParameters(RoleActions.RoleRemoveUserFromRole.name());
         parameters.add(RoleRemoveUserFromRoleParams.RoleName.name(), role);
         parameters.add(RoleRemoveUserFromRoleParams.UserName.name(), username);
 
@@ -337,14 +337,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void removeRole(final String role) {
-        final AciParameters parameters = new AciParameters(RoleActions.RoleDelete.name());
+        final ActionParameters parameters = new ActionParameters(RoleActions.RoleDelete.name());
         parameters.add(RoleDeleteParams.RoleName.name(), role);
         aciService.executeAction(getCommunity(), parameters, emptyProcessor);
     }
 
     @Override
     public boolean authenticateUser(final String username, final String password, final String method) {
-        final AciParameters parameters = new AciParameters(UserActions.Security.name());
+        final ActionParameters parameters = new ActionParameters(UserActions.Security.name());
         parameters.put(SecurityParams.UserName.name(), username);
         parameters.put(SecurityParams.Password.name(), password);
         parameters.put(SecurityParams.Repository.name(), method);
@@ -354,7 +354,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails searchUsers(final String searchText, final int startUser, final int maxUsers) {
-        final AciParameters parameters = new AciParameters(UserActions.UserReadUserListDetails.name());
+        final ActionParameters parameters = new ActionParameters(UserActions.UserReadUserListDetails.name());
         parameters.put(UserReadUserListDetailsParams.Match.name(), searchText);
         parameters.put(UserReadUserListDetailsParams.Start.name(), startUser);
         parameters.put(UserReadUserListDetailsParams.MaxUsers.name(), maxUsers);
@@ -364,7 +364,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Profiles profileRead(final String user) {
-        final AciParameters parameters = new AciParameters("ProfileRead");
+        final ActionParameters parameters = new ActionParameters("ProfileRead");
         parameters.put("Username", user);
         parameters.put("ShowTerms", true);
         parameters.put("ShowInfo", true);
@@ -374,7 +374,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileUser profileUser(final String user, final String reference) {
-        final AciParameters parameters = new AciParameters("ProfileUser");
+        final ActionParameters parameters = new ActionParameters("ProfileUser");
         parameters.put("Username", user);
         parameters.put("Document", new ReferencesBuilder(reference));
         parameters.put("Mode", "reference");
@@ -393,7 +393,7 @@ public class UserServiceImpl implements UserService {
         // we don't use the Community action because it always checks the 'default' named area as
         // well as the one we provide
         // this query is essentially what Community does, but we restrict to profiles
-        final AciParameters parameters = new AciParameters("Query");
+        final ActionParameters parameters = new ActionParameters("Query");
         parameters.put("DatabaseMatch", agentStoreProfilesDatabase);
         parameters.put("FieldText", new MATCH("NAMEDAREA", namedArea));
         parameters.put("Text", searchText);
@@ -468,7 +468,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private List<User> getUsers() {
-        final Set<AciParameter> parameters = new AciParameters(UserActions.UserReadUserListDetails.name());
+        final Set<ActionParameter<?>> parameters = new ActionParameters(UserActions.UserReadUserListDetails.name());
         return aciService.executeAction(getCommunity(), parameters, userDetailsProcessor).getUser();
     }
 
@@ -479,7 +479,7 @@ public class UserServiceImpl implements UserService {
             final String rolename) {
         final boolean byRole = StringUtils.isNotBlank(rolename);
 
-        final AciParameters parameters = new AciParameters(
+        final ActionParameters parameters = new ActionParameters(
                 byRole ? RoleActions.RoleGetUserList.name()
                        : UserActions.UserReadUserList.name());
 
@@ -504,7 +504,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private Iterable<String> getUsersWithRole(final String role) {
-        final AciParameters parameters = new AciParameters(RoleActions.RoleGetUserList.name());
+        final ActionParameters parameters = new ActionParameters(RoleActions.RoleGetUserList.name());
         parameters.add(RoleGetUserListParams.RoleName.name(), role);
         return aciService.executeAction(getCommunity(), parameters, usersProcessor).getUser();
     }

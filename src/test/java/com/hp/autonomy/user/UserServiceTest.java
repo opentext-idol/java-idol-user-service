@@ -2,7 +2,7 @@ package com.hp.autonomy.user;
 
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.transport.AciServerDetails;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.opentext.idol.types.marshalling.ProcessorFactory;
 import com.opentext.idol.types.responses.*;
@@ -55,33 +55,33 @@ public class UserServiceTest {
 
     @Test
     public void addUser() {
-        when(aciService.executeAction(any(AciServerDetails.class), any(AciParameters.class), any())).thenReturn(createUid(1L));
+        when(aciService.executeAction(any(AciServerDetails.class), any(ActionParameters.class), any())).thenReturn(createUid(1L));
         assertEquals(1, userService.addUser("user1", "password"));
     }
 
     @Test
     public void addUserWithRole() {
-        when(aciService.executeAction(any(AciServerDetails.class), any(AciParameters.class), any())).thenReturn(createUid(1L));
+        when(aciService.executeAction(any(AciServerDetails.class), any(ActionParameters.class), any())).thenReturn(createUid(1L));
         assertEquals(1, userService.addUser("user1", "password", "role"));
     }
 
     @Test
     public void deleteUser() {
         userService.deleteUser(1L);
-        verify(aciService).executeAction(any(AciServerDetails.class), any(AciParameters.class), any());
+        verify(aciService).executeAction(any(AciServerDetails.class), any(ActionParameters.class), any());
     }
 
     @Test
     public void getUserDetails() {
         final String username = "user1";
-        when(aciService.executeAction(any(AciServerDetails.class), any(AciParameters.class), any())).thenReturn(createUser(username, 1L));
+        when(aciService.executeAction(any(AciServerDetails.class), any(ActionParameters.class), any())).thenReturn(createUser(username, 1L));
         assertNotNull(userService.getUserDetails(username));
     }
 
     @Test
     public void getUserDetailsFromUid() {
         final Long uid = 1L;
-        when(aciService.executeAction(any(AciServerDetails.class), any(AciParameters.class), any())).thenReturn(createUser("user1", uid));
+        when(aciService.executeAction(any(AciServerDetails.class), any(ActionParameters.class), any())).thenReturn(createUser("user1", uid));
         assertNotNull(userService.getUserDetails(uid));
     }
 
@@ -98,10 +98,10 @@ public class UserServiceTest {
             Arrays.asList("u1", "u2", "u3", "u4"));
         assertEquals(mockUsers, results);
 
-        final ArgumentCaptor<AciParameters> paramsCaptor = ArgumentCaptor.forClass(AciParameters.class);
+        final ArgumentCaptor<ActionParameters> paramsCaptor = ArgumentCaptor.forClass(ActionParameters.class);
         verify(aciService).executeAction(
             any(AciServerDetails.class), paramsCaptor.capture(), any());
-        final AciParameters params = paramsCaptor.getValue();
+        final ActionParameters params = paramsCaptor.getValue();
         assertEquals("UserReadUserListDetails", params.get("action"));
         assertEquals("u1,u2,u3,u4", params.get("match"));
         assertEquals("4", params.get("maxusers"));
@@ -110,13 +110,13 @@ public class UserServiceTest {
     @Test
     public void getUsersDetails_someUnsafe() {
         when(aciService.executeAction(any(), any(), any())).thenAnswer(inv -> {
-            final AciParameters params = (AciParameters) inv.getArguments()[1];
-            final String action = params.get("action");
+            final ActionParameters params = (ActionParameters) inv.getArguments()[1];
+            final Object action = params.get("action");
             if (action.equals("UserReadUserListDetails")) {
                 return mockUserDetailsResponse(
                     Arrays.asList(createUser("u1", 3), createUser("u2", 6)));
             } else {
-                return createUser(params.get("username"), 99);
+                return createUser((String) params.get("username"), 99);
             }
         });
 
@@ -130,23 +130,23 @@ public class UserServiceTest {
         assertEquals("uns?afe", results.get(3).getUsername());
         assertEquals("unsafe*", results.get(4).getUsername());
 
-        final ArgumentCaptor<AciParameters> paramsCaptor = ArgumentCaptor.forClass(AciParameters.class);
+        final ArgumentCaptor<ActionParameters> paramsCaptor = ArgumentCaptor.forClass(ActionParameters.class);
         verify(aciService, Mockito.times(4)).executeAction(
             any(AciServerDetails.class), paramsCaptor.capture(), any());
-        final List<AciParameters> allParams = paramsCaptor.getAllValues();
+        final List<ActionParameters> allParams = paramsCaptor.getAllValues();
 
-        final AciParameters listParams = allParams.get(0);
+        final ActionParameters listParams = allParams.get(0);
         assertEquals("UserReadUserListDetails", listParams.get("action"));
         assertEquals("u1,u2", listParams.get("match"));
         assertEquals("2", listParams.get("maxusers"));
 
-        final AciParameters getParams1 = allParams.get(1);
+        final ActionParameters getParams1 = allParams.get(1);
         assertEquals("UserRead", getParams1.get("action"));
         assertEquals(",unsafe", getParams1.get("username"));
-        final AciParameters getParams2 = allParams.get(2);
+        final ActionParameters getParams2 = allParams.get(2);
         assertEquals("UserRead", getParams2.get("action"));
         assertEquals("uns?afe", getParams2.get("username"));
-        final AciParameters getParams3 = allParams.get(3);
+        final ActionParameters getParams3 = allParams.get(3);
         assertEquals("UserRead", getParams3.get("action"));
         assertEquals("unsafe*", getParams3.get("username"));
     }
@@ -154,57 +154,57 @@ public class UserServiceTest {
     @Test
     public void resetPassword() {
         userService.resetPassword(1L, "password");
-        verify(aciService).executeAction(any(AciServerDetails.class), any(AciParameters.class), any());
+        verify(aciService).executeAction(any(AciServerDetails.class), any(ActionParameters.class), any());
     }
 
     @Test
     public void getUserRole() {
-        when(aciService.executeAction(any(AciServerDetails.class), any(AciParameters.class), any())).thenReturn(mockRolesResponse(Collections.singletonList("SomeRole")));
+        when(aciService.executeAction(any(AciServerDetails.class), any(ActionParameters.class), any())).thenReturn(mockRolesResponse(Collections.singletonList("SomeRole")));
         assertThat(userService.getUserRole(1L), hasSize(1));
     }
 
     @Test
     public void getRoles() {
-        when(aciService.executeAction(any(AciServerDetails.class), any(AciParameters.class), any())).thenReturn(mockRolesResponse(Collections.singletonList("SomeRole")));
+        when(aciService.executeAction(any(AciServerDetails.class), any(ActionParameters.class), any())).thenReturn(mockRolesResponse(Collections.singletonList("SomeRole")));
         assertThat(userService.getRoles(), hasSize(1));
     }
 
     @Test
     public void addRole() {
         userService.addRole("SomeRole");
-        verify(aciService).executeAction(any(AciServerDetails.class), any(AciParameters.class), any());
+        verify(aciService).executeAction(any(AciServerDetails.class), any(ActionParameters.class), any());
     }
 
     @Test
     public void addUserToRole() {
         userService.addUserToRole(1L, "SomeRole");
-        verify(aciService).executeAction(any(AciServerDetails.class), any(AciParameters.class), any());
+        verify(aciService).executeAction(any(AciServerDetails.class), any(ActionParameters.class), any());
     }
 
     @Test
     public void removeUserFromRole() {
         userService.removeUserFromRole(1L, "SomeRole");
-        verify(aciService).executeAction(any(AciServerDetails.class), any(AciParameters.class), any());
+        verify(aciService).executeAction(any(AciServerDetails.class), any(ActionParameters.class), any());
     }
 
     @Test
     public void removeRole() {
         userService.removeRole("SomeRole");
-        verify(aciService).executeAction(any(AciServerDetails.class), any(AciParameters.class), any());
+        verify(aciService).executeAction(any(AciServerDetails.class), any(ActionParameters.class), any());
     }
 
     @Test
     public void authenticateUser() {
         final Security security = new Security();
         security.setAuthenticate(true);
-        when(aciService.executeAction(any(AciServerDetails.class), any(AciParameters.class), any())).thenReturn(security);
+        when(aciService.executeAction(any(AciServerDetails.class), any(ActionParameters.class), any())).thenReturn(security);
         assertTrue(userService.authenticateUser("user1", "password", "repository"));
     }
 
     @Test
     public void getUser() {
         final String username = "user1";
-        when(aciService.executeAction(any(AciServerDetails.class), any(AciParameters.class), any()))
+        when(aciService.executeAction(any(AciServerDetails.class), any(ActionParameters.class), any()))
                 .thenReturn(createUser(username, 1L), mockRolesResponse(Collections.singletonList("SomeRole")));
         final UserRoles userRoles = userService.getUser(username);
         assertNotNull(userRoles);
@@ -248,9 +248,9 @@ public class UserServiceTest {
 
         assertEquals(mockResults, results);
 
-        final ArgumentCaptor<AciParameters> paramsCaptor = ArgumentCaptor.forClass(AciParameters.class);
+        final ArgumentCaptor<ActionParameters> paramsCaptor = ArgumentCaptor.forClass(ActionParameters.class);
         verify(aciService).executeAction(any(AciServerDetails.class), paramsCaptor.capture(), any());
-        final AciParameters params = paramsCaptor.getValue();
+        final ActionParameters params = paramsCaptor.getValue();
         assertEquals("Query", params.get("action"));
         assertEquals("p db", params.get("databasematch"));
         assertEquals("MATCH{experts}:NAMEDAREA", params.get("fieldtext"));
@@ -268,7 +268,7 @@ public class UserServiceTest {
         final Users usersForFirstRole = mockUsersResponse(Collections.singletonList("user1"));
         final Users usersForSecondRole = mockUsersResponse(Arrays.asList("user1", "user2"));
         final Users usersForThirdRole = mockUsersResponse(Collections.emptyList());
-        when(aciService.executeAction(any(AciServerDetails.class), any(AciParameters.class), any()))
+        when(aciService.executeAction(any(AciServerDetails.class), any(ActionParameters.class), any()))
                 .thenReturn(rolesResponseData, userDetails, usersForFirstRole, usersForSecondRole, usersForThirdRole);
     }
 
