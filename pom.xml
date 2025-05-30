@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.hp.autonomy</groupId>
         <artifactId>foss-spring-boot-master-pom</artifactId>
-        <version>3.5.0</version>
+        <version>3.6.0</version>
     </parent>
 
     <groupId>com.hp.autonomy.frontend.user</groupId>
@@ -68,12 +68,12 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>idol-types</artifactId>
-            <version>25.2.0</version>
+            <version>25.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.aci.client</groupId>
             <artifactId>aci-api</artifactId>
-            <version>25.2.0</version>
+            <version>25.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.configuration</groupId>
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>com.hp.autonomy.aci.content</groupId>
             <artifactId>content-parameter-api</artifactId>
-            <version>25.2.0</version>
+            <version>25.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
